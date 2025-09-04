@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		443E45DD2DB7771800EDD2DA /* SingleChordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443E45DC2DB7771800EDD2DA /* SingleChordView.swift */; };
+		445149A22B5EF31400E28230 /* WhistleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445149A12B5EF31400E28230 /* WhistleView.swift */; };
+		445149A42B5EF53B00E28230 /* OcarinaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445149A32B5EF53B00E28230 /* OcarinaView.swift */; };
+		4467C7842B5EA761001E679F /* VocalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4467C7832B5EA761001E679F /* VocalView.swift */; };
+		446B60222E57175E0080B9D8 /* CapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B60212E57175E0080B9D8 /* CapsuleButton.swift */; };
+		446B60242E5718EF0080B9D8 /* IndividualIntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B60232E5718EF0080B9D8 /* IndividualIntervalView.swift */; };
+		44A99F052B489EA400E876F8 /* SequenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A99F042B489EA400E876F8 /* SequenceView.swift */; };
+		44A99F092B49BC7900E876F8 /* DiatonicChordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A99F082B49BC7900E876F8 /* DiatonicChordView.swift */; };
 		44E8B5182AF1270200830851 /* Music_AppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E8B5172AF1270200830851 /* Music_AppApp.swift */; };
 		44E8B51A2AF1270200830851 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E8B5192AF1270200830851 /* ContentView.swift */; };
 		44E8B51C2AF1270400830851 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44E8B51B2AF1270400830851 /* Assets.xcassets */; };
@@ -14,6 +22,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		443E45DC2DB7771800EDD2DA /* SingleChordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleChordView.swift; sourceTree = "<group>"; };
+		445149A12B5EF31400E28230 /* WhistleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhistleView.swift; sourceTree = "<group>"; };
+		445149A32B5EF53B00E28230 /* OcarinaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OcarinaView.swift; sourceTree = "<group>"; };
+		4467C7832B5EA761001E679F /* VocalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocalView.swift; sourceTree = "<group>"; };
+		446B60212E57175E0080B9D8 /* CapsuleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleButton.swift; sourceTree = "<group>"; };
+		446B60232E5718EF0080B9D8 /* IndividualIntervalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualIntervalView.swift; sourceTree = "<group>"; };
+		44A99F042B489EA400E876F8 /* SequenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceView.swift; sourceTree = "<group>"; };
+		44A99F082B49BC7900E876F8 /* DiatonicChordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiatonicChordView.swift; sourceTree = "<group>"; };
 		44E8B5142AF1270200830851 /* Music App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Music App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E8B5172AF1270200830851 /* Music_AppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music_AppApp.swift; sourceTree = "<group>"; };
 		44E8B5192AF1270200830851 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -53,6 +69,14 @@
 			children = (
 				44E8B5172AF1270200830851 /* Music_AppApp.swift */,
 				44E8B5192AF1270200830851 /* ContentView.swift */,
+				446B60232E5718EF0080B9D8 /* IndividualIntervalView.swift */,
+				446B60212E57175E0080B9D8 /* CapsuleButton.swift */,
+				443E45DC2DB7771800EDD2DA /* SingleChordView.swift */,
+				44A99F042B489EA400E876F8 /* SequenceView.swift */,
+				44A99F082B49BC7900E876F8 /* DiatonicChordView.swift */,
+				4467C7832B5EA761001E679F /* VocalView.swift */,
+				445149A12B5EF31400E28230 /* WhistleView.swift */,
+				445149A32B5EF53B00E28230 /* OcarinaView.swift */,
 				44E8B51B2AF1270400830851 /* Assets.xcassets */,
 				44E8B51D2AF1270400830851 /* Preview Content */,
 			);
@@ -83,6 +107,8 @@
 			dependencies = (
 			);
 			name = "Music App";
+			packageProductDependencies = (
+			);
 			productName = "Music App";
 			productReference = 44E8B5142AF1270200830851 /* Music App.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +137,8 @@
 				Base,
 			);
 			mainGroup = 44E8B50B2AF1270200830851;
+			packageReferences = (
+			);
 			productRefGroup = 44E8B5152AF1270200830851 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -137,8 +165,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44A99F052B489EA400E876F8 /* SequenceView.swift in Sources */,
+				446B60222E57175E0080B9D8 /* CapsuleButton.swift in Sources */,
+				445149A22B5EF31400E28230 /* WhistleView.swift in Sources */,
 				44E8B51A2AF1270200830851 /* ContentView.swift in Sources */,
 				44E8B5182AF1270200830851 /* Music_AppApp.swift in Sources */,
+				44A99F092B49BC7900E876F8 /* DiatonicChordView.swift in Sources */,
+				443E45DD2DB7771800EDD2DA /* SingleChordView.swift in Sources */,
+				4467C7842B5EA761001E679F /* VocalView.swift in Sources */,
+				446B60242E5718EF0080B9D8 /* IndividualIntervalView.swift in Sources */,
+				445149A42B5EF53B00E28230 /* OcarinaView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,11 +311,14 @@
 				DEVELOPMENT_TEAM = JAA69CCMYZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Ear Trainer";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -304,11 +343,14 @@
 				DEVELOPMENT_TEAM = JAA69CCMYZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Ear Trainer";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
