@@ -21,44 +21,47 @@ struct ContentView: View {
                         .font(.system(size: 30))
                         .fontWeight(.bold)
                     Spacer()
-                    ScrollView(showsIndicators: false) {
-                        NavigationLink(destination: IndividualIntervalView()) {
-                            Text("Individual Intervals")
-                                .capsuleButtonStyle()
-                        }
-                        
-                        NavigationLink(destination: SequenceView()) {
-                            Text("Intervals")
-                                .capsuleButtonStyle()
-                        }
-                        
-                        NavigationLink(destination: DiatonicChordView()) {
-                            Text("Diatonic Chords")
-                                .capsuleButtonStyle()
-                        }
-                        
-                        NavigationLink(destination: SingleChordView()) {
-                            Text("Single Chords")
-                                .capsuleButtonStyle()
-                        }
-                        
-                        NavigationLink(destination: VocalView()) {
-                            Text("Vocals")
-                                .capsuleButtonStyle()
-                        }
-                        
-                        NavigationLink(destination: WhistleView()) {
-                            Text("Whistling")
-                                .capsuleButtonStyle()
-                        }
-                        
-                        NavigationLink(destination: OcarinaView()) {
-                            Text("Ocarina")
-                                .capsuleButtonStyle()
-                        }                    
-                    }
-                    .padding()
                 }
+                VStack {
+                    NavigationLink(destination: IndividualIntervalView()) {
+                        Text("Individual Intervals")
+                            .capsuleButtonStyle()
+                    }
+                    
+                    NavigationLink(destination: SequenceView()) {
+                        Text("Intervals")
+                            .capsuleButtonStyle()
+                    }
+                    
+                    NavigationLink(destination: SingleChordView()) {
+                        Text("Single Chords")
+                            .capsuleButtonStyle()
+                    }
+                    
+                    NavigationLink(destination: DiatonicChordView()) {
+                        Text("Diatonic Chords")
+                            .capsuleButtonStyle()
+                    }
+                    
+                    NavigationLink(destination: VocalView()) {
+                        Text("Vocals")
+                            .capsuleButtonStyle()
+                    }
+                    
+                    NavigationLink(destination: WhistleView()) {
+                        Text("Whistling")
+                            .capsuleButtonStyle()
+                    }
+                    
+                    NavigationLink(destination: OcarinaView()) {
+                        Text("Ocarina")
+                            .capsuleButtonStyle()
+                    }
+//                    ScrollView(showsIndicators: false) {
+//                    }
+//                    .padding()
+                }
+                .padding()
             }
         }
 

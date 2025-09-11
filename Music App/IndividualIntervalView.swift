@@ -26,14 +26,45 @@ struct IndividualIntervalView: View {
     @State var correct = 0
     @State var percentage = ""
     @State var isEditing = false
+    @State private var settings = false
+    @State private var lowest: Int = {
+        let saved = UserDefaults.standard.integer(forKey: "lowest")
+        return saved == 0 ? 46 : saved
+    }()
+    @State private var absoluteLowest = 40
+    @State private var highest: Int = {
+        let saved = UserDefaults.standard.integer(forKey: "highest")
+        return saved == 0 ? 84 : saved
+    }()
+    @State private var absoluteHighest = 84
+    @State private var showAnswer = false
     
     var body: some View {
         ZStack {
+            Rectangle()
+                .foregroundStyle(.white)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    showAnswer = true
+                }
+            // settings button
             VStack {
                 HStack {
                     Spacer()
                     VStack {
+                        if !practice {
+                            Button {
+                                settings = true
+                            } label: {
+                                Image(systemName: "gearshape")
+                            }
+                            .font(.title)
+                            .foregroundStyle(.gray)
+                            .padding(.trailing, 0)
+                            .padding(.bottom, 2)
+                        }
                         Text(practice ? "" : percentage)
+                            .frame(width: 57)
                         if incorrect.count != 0 {
                             Button {
                                 practice = true
@@ -45,12 +76,14 @@ struct IndividualIntervalView: View {
                                     .background(.gray.opacity(0.3), in: Circle())
                                     .foregroundStyle(practice ? Color.blue : Color.black)
                             }
-                            Text(String(incorrect.count))
-                                .font(.caption)
+                            if !practice {
+                                Text(String(incorrect.count))
+                                    .font(.caption)
+                            }
                         }
                     } // practice incorrect button
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 10)
                 Spacer()
             }
             VStack {
@@ -121,6 +154,7 @@ struct IndividualIntervalView: View {
                 } // correct and incorrect buttons
                 .padding()
             }
+            // tempo slider and answer
             VStack {
                 Spacer()
                 Slider(value: $tempo,
@@ -133,9 +167,11 @@ struct IndividualIntervalView: View {
                 .padding()
                 if practice {
                     Text(incorrectAnswers[0])
+                        .foregroundStyle(showAnswer ? Color.primary : Color.white)
                         .font(.caption)
                 } else {
                     Text(atonalAnswerString)
+                        .foregroundStyle(showAnswer ? Color.primary : Color.white)
                         .font(.caption)
                 }
                 
@@ -145,6 +181,84 @@ struct IndividualIntervalView: View {
                     .foregroundStyle(Color.white)
                     .ignoresSafeArea()
                 Text("You did it!🎉")
+            }
+            if settings {
+                Rectangle()
+                    .ignoresSafeArea()
+                    .foregroundStyle(.white)
+                VStack {
+                    Text("Interval range")
+                        .font(.title)
+                    HStack {
+                        VStack {
+                            Text("Lowest")
+                                .font(.title2)
+                            HStack {
+                                Button("-"){
+                                    if lowest > absoluteLowest {
+                                        lowest -= 1
+                                        UserDefaults.standard.set(lowest, forKey: "lowest")
+                                    }
+                                }
+                                .foregroundStyle(.black)
+                                .padding(7)
+                                .background(.gray.opacity(0.5))
+                                .clipShape(RoundedRectangle(cornerRadius: 5))
+                                Text(String(lowest))
+                                    .font(.title)
+                                    .monospacedDigit()
+                                Button("+") {
+                                    if highest - lowest > 12 {
+                                        lowest += 1
+                                        UserDefaults.standard.set(lowest, forKey: "lowest")
+                                    }
+                                }
+                                .foregroundStyle(.black)
+                                .padding(7)
+                                .background(.gray.opacity(0.5))
+                                .clipShape(RoundedRectangle(cornerRadius: 5))
+                            }
+                        }
+                        .padding()
+                        VStack {
+                            Text("Highest")
+                                .font(.title2)
+                            HStack {
+                                Button("-"){
+                                    if highest - lowest > 12 {
+                                        highest -= 1
+                                        UserDefaults.standard.set(highest, forKey: "highest")
+                                    }
+                                }
+                                .foregroundStyle(.black)
+                                .padding(7)
+                                .background(.gray.opacity(0.5))
+                                .clipShape(RoundedRectangle(cornerRadius: 5))
+                                Text(String(highest))
+                                    .font(.title)
+                                    .monospacedDigit()
+                                Button("+") {
+                                    if highest < absoluteHighest {
+                                        highest += 1
+                                        UserDefaults.standard.set(highest, forKey: "highest")
+                                    }
+                                }
+                                .foregroundStyle(.black)
+                                .padding(7)
+                                .background(.gray.opacity(0.5))
+                                .clipShape(RoundedRectangle(cornerRadius: 5))
+                            }
+                        }
+                        .padding()
+                    }
+                }
+                VStack {
+                    Spacer()
+                    Button("done") {
+                        settings = false
+                        next()
+                    }
+                }
             }
         }
         .onAppear {
@@ -156,6 +270,7 @@ struct IndividualIntervalView: View {
     }
     
     func nextPractice() {
+        showAnswer = false
         notes.removeAll()
         notes = incorrect[0]
         rootNote = notes[0]
@@ -178,6 +293,7 @@ struct IndividualIntervalView: View {
     }
     
     func next() {
+        showAnswer = false
         if counter > 0 { //to find percentage
             print("Correct: " + String(correct))
             print("Counter: " + String(counter))
@@ -196,12 +312,12 @@ struct IndividualIntervalView: View {
                 let coinflip = Int.random(in: 1...2)
                 if coinflip == 1 {
                     nextNote = previousNote - nextNote
-                    if nextNote > 46 {
+                    if nextNote > lowest {
                         done = true
                     }
                 } else {
                     nextNote = previousNote + nextNote
-                    if nextNote <= 84 {
+                    if nextNote <= highest {
                         done = true
                     }
                 }

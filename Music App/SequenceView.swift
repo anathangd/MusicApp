@@ -58,8 +58,10 @@ struct SequenceView: View {
                                     .background(.gray.opacity(0.3), in: Circle())
                                     .foregroundStyle(practice ? Color.blue : Color.black)
                             }
-                            Text(String(incorrect.count))
-                                .font(.caption)
+                            if !practice {
+                                Text(String(incorrect.count))
+                                    .font(.caption)
+                            }
                         }
                     }
                 }

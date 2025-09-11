@@ -14,80 +14,94 @@ struct SingleChordView: View {
     @State var highestNote: UInt8 = 84
     @State var chordHighestNote: UInt8 = 84
     @State var rootNoteLetter = "C"
-    @State var answer = ["I", "ii", "iii"]
     @State var chords: [[UInt8]] = [[60, 64, 67], [62, 65, 69], [64, 67, 71]]
     @State var singles = true
     @State var singlesAnswer = "default"
-    @State var onlyMm7 = false
     @State var settings = false
-    
-    @State var major = true
-    @State var minor = true
-    @State var dim = true
-    @State var aug = true
-    @State var maj7 = true
-    @State var min7 = true
-    @State var dom = true
-    @State var halfDim7 = true
-    @State var dimMaj7 = true
-    @State var fullDim7 = true
-    @State var superDim = true
-    @State var minMaj7 = true
-    @State var aug7 = true
-    
-    @State var maj9 = true
-    @State var majSharp11 = true
-    @State var maj13 = true
-    @State var maj6 = true
-    @State var maj69 = true
-    @State var maj69Sharp11 = true
-    @State var maj69Sharp11Add13 = true
-    
-    @State var min9 = true
-    @State var min11 = true
-    @State var min13 = true
-    @State var min6 = true
-    @State var min69 = true
-    @State var min69nat11 = true
-    @State var min691113 = true
-    
-    @State var domSharp5 = true
-    @State var domNine = true
-    @State var domNineSharp5 = true
-    @State var domSharp9Flat5 = true
-    @State var domSharp9Sharp5 = true
-    @State var domFlat9Sharp9Sharp5 = true
-    @State var domSharp5Flat9Sharp9Sharp11 = true
-    @State var domFlat9 = true
-    @State var domSharp9 = true
-    @State var dom9Sharp11 = true
-    @State var dom13 = true
-    @State var dom13Sharp11 = true
-    @State var dom13Flat9Sharp11 = true
-    @State var dom13Sharp9Sharp11 = true
-    
-    @State var min9Flat5 = true
-    @State var min7Flat5911 = true
-    @State var min7Flat5911Flat13 = true
-    
-    @State var dim79 = true
-    @State var dim7911 = true
-    @State var dom7sus4 = true
-    @State var dom9sus4 = true
-    @State var dom13sus4 = true
-    @State var dom7sus4Flat9 = true
-    @State var dom13sus4Flat9 = true
-    
-    @State var allOn = true
-    @State var normalOn = true
     
     @State private var showNoChordsAlert = false
     
-    @State var chosenChords : Set = ["Major", "minor", "diminished", "augmented", "Major 7th", "minor 7th", "Dominant 7th", "half-diminished 7th", "diminished Major 7th", "fully-diminished 7th", "super-diminished", "minor-Major 7th", "augmented 7th", "Maj9", "Maj#11", "Maj13", "Maj6", "Maj6/9", "Maj6/9#11", "Maj6/9(#11,13)", "min9", "min11", "min13", "min6", "min6/9", "min6/9(11)", "min6/9(11,13)", "7#5", "9", "9#5", "7(#9b5)", "7(#9#5)", "7(b9#9#5)", "7(#5b9#9#11)", "b9", "#9", "9(#11)", "13", "13(#11)", "13(b9#11)", "13(#9#11)", "min9(b5)", "min7b5(9,11)", "min7b5(9,11,b13)", "dim7(9)", "dim7(9,11)", "7sus4", "9sus4", "13sus4", "7sus4(b9)", "13sus4(b9)"]
-     // C, D, and E major chords
+    @State private var chordOptions: [ChordOption] = [
+        // Normal
+        .init(name: "Major", category: .normal, isOn: true),
+        .init(name: "minor", category: .normal, isOn: true),
+        .init(name: "diminished", category: .normal, isOn: true),
+        .init(name: "augmented", category: .normal, isOn: true),
+        .init(name: "Major 7th", category: .normal, isOn: true),
+        .init(name: "minor 7th", category: .normal, isOn: true),
+        .init(name: "Dominant 7th", category: .normal, isOn: true),
+        .init(name: "half-diminished 7th", category: .normal, isOn: true),
+        .init(name: "diminished Major 7th", category: .normal, isOn: true),
+        .init(name: "fully-diminished 7th", category: .normal, isOn: true),
+        .init(name: "super-diminished", category: .normal, isOn: true),
+        .init(name: "minor-Major 7th", category: .normal, isOn: true),
+        .init(name: "augmented 7th", category: .normal, isOn: true),
+
+        // Major Extended
+        .init(name: "Maj9", category: .majorExtended, isOn: true),
+        .init(name: "Maj#11", category: .majorExtended, isOn: true),
+        .init(name: "Maj13", category: .majorExtended, isOn: true),
+        .init(name: "Maj6", category: .majorExtended, isOn: true),
+        .init(name: "Maj6/9", category: .majorExtended, isOn: true),
+        .init(name: "Maj6/9#11", category: .majorExtended, isOn: true),
+        .init(name: "Maj6/9(#11,13)", category: .majorExtended, isOn: true),
+
+        // Minor Extended
+        .init(name: "min9", category: .minorExtended, isOn: true),
+        .init(name: "min11", category: .minorExtended, isOn: true),
+        .init(name: "min13", category: .minorExtended, isOn: true),
+        .init(name: "min6", category: .minorExtended, isOn: true),
+        .init(name: "min6/9", category: .minorExtended, isOn: true),
+        .init(name: "min6/9(11)", category: .minorExtended, isOn: true),
+        .init(name: "min6/9(11,13)", category: .minorExtended, isOn: true),
+
+        // Dominant Extended
+        .init(name: "7#5", category: .dominantExtended, isOn: true),
+        .init(name: "9", category: .dominantExtended, isOn: true),
+        .init(name: "9#5", category: .dominantExtended, isOn: true),
+        .init(name: "7(#9b5)", category: .dominantExtended, isOn: true),
+        .init(name: "7(#9#5)", category: .dominantExtended, isOn: true),
+        .init(name: "7(b9#9#5)", category: .dominantExtended, isOn: true),
+        .init(name: "7(#5b9#9#11)", category: .dominantExtended, isOn: true),
+        .init(name: "b9", category: .dominantExtended, isOn: true),
+        .init(name: "#9", category: .dominantExtended, isOn: true),
+        .init(name: "9(#11)", category: .dominantExtended, isOn: true),
+        .init(name: "13", category: .dominantExtended, isOn: true),
+        .init(name: "13(#11)", category: .dominantExtended, isOn: true),
+        .init(name: "13(b9#11)", category: .dominantExtended, isOn: true),
+        .init(name: "13(#9#11)", category: .dominantExtended, isOn: true),
+
+        // Half-Diminished Extended
+        .init(name: "min9(b5)", category: .halfDiminishedExtended, isOn: true),
+        .init(name: "min7b5(9,11)", category: .halfDiminishedExtended, isOn: true),
+        .init(name: "min7b5(9,11,b13)", category: .halfDiminishedExtended, isOn: true),
+
+        // Diminished Extended
+        .init(name: "dim7(9)", category: .diminishedExtended, isOn: true),
+        .init(name: "dim7(9,11)", category: .diminishedExtended, isOn: true),
+
+        // Suspended Extended
+        .init(name: "7sus4", category: .suspendedExtended, isOn: true),
+        .init(name: "9sus4", category: .suspendedExtended, isOn: true),
+        .init(name: "13sus4", category: .suspendedExtended, isOn: true),
+        .init(name: "7sus4(b9)", category: .suspendedExtended, isOn: true),
+        .init(name: "13sus4(b9)", category: .suspendedExtended, isOn: true),
+    ]
+    @State private var showAnswer = false
+    
+    var chosenChords: [String] {
+        chordOptions.filter { $0.isOn }.map { $0.name }
+    }
     
     var body: some View {
         ZStack {
+            Rectangle()
+                .foregroundStyle(.white)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    showAnswer = true
+                }
+            // settings button
             VStack {
                 HStack {
                     Spacer()
@@ -103,7 +117,8 @@ struct SingleChordView: View {
                     }
                 }
                 Spacer()
-            } // settings button
+            }
+            // main display
             VStack {
                 Text("Score: " + String(counter))
                     .font(.system(size: 30))
@@ -129,465 +144,80 @@ struct SingleChordView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .padding()
                 
-            } // main display
+            }
+            // answer
             VStack {
                 Spacer()
                 Text(singlesAnswer)
+                    .foregroundStyle(showAnswer ? Color.primary : Color.white)
                     .font(.subheadline)
             } // answer
+            
             if settings {
                 ZStack {
                     Rectangle()
                         .foregroundStyle(Color.white)
                         .ignoresSafeArea()
-                    ScrollView(showsIndicators: false) {
-                        VStack {
-                            HStack {
-                                Text("Toggle All")
-                                Toggle(isOn: $allOn){}
-                                    .onChange(of: allOn) { _, newValue in
-                                        if allOn {
-                                            normalOn = true
-                                            major = true
-                                            minor = true
-                                            dim = true
-                                            aug = true
-                                            maj7 = true
-                                            min7 = true
-                                            dom = true
-                                            halfDim7 = true
-                                            dimMaj7 = true
-                                            fullDim7 = true
-                                            superDim = true
-                                            minMaj7 = true
-                                            aug7 = true
-                                            
-                                            maj9 = true
-                                            majSharp11 = true
-                                            maj13 = true
-                                            maj6 = true
-                                            maj69 = true
-                                            maj69Sharp11 = true
-                                            maj69Sharp11Add13 = true
-
-                                            min9 = true
-                                            min11 = true
-                                            min13 = true
-                                            min6 = true
-                                            min69 = true
-                                            min69nat11 = true
-                                            min691113 = true
-
-                                            domSharp5 = true
-                                            domNine = true
-                                            domNineSharp5 = true
-                                            domSharp9Flat5 = true
-                                            domSharp9Sharp5 = true
-                                            domFlat9Sharp9Sharp5 = true
-                                            domSharp5Flat9Sharp9Sharp11 = true
-                                            domFlat9 = true
-                                            domSharp9 = true
-                                            dom9Sharp11 = true
-                                            dom13 = true
-                                            dom13Sharp11 = true
-                                            dom13Flat9Sharp11 = true
-                                            dom13Sharp9Sharp11 = true
-
-                                            min9Flat5 = true
-                                            min7Flat5911 = true
-                                            min7Flat5911Flat13 = true
-
-                                            dim79 = true
-                                            dim7911 = true
-                                            dom7sus4 = true
-                                            dom9sus4 = true
-                                            dom13sus4 = true
-                                            dom7sus4Flat9 = true
-                                            dom13sus4Flat9 = true
-                                        } else {
-                                            normalOn = false
-                                            major = false
-                                            minor = false
-                                            dim = false
-                                            aug = false
-                                            maj7 = false
-                                            min7 = false
-                                            dom = false
-                                            halfDim7 = false
-                                            dimMaj7 = false
-                                            fullDim7 = false
-                                            superDim = false
-                                            minMaj7 = false
-                                            aug7 = false
-
-                                            maj9 = false
-                                            majSharp11 = false
-                                            maj13 = false
-                                            maj6 = false
-                                            maj69 = false
-                                            maj69Sharp11 = false
-                                            maj69Sharp11Add13 = false
-
-                                            min9 = false
-                                            min11 = false
-                                            min13 = false
-                                            min6 = false
-                                            min69 = false
-                                            min69nat11 = false
-                                            min691113 = false
-
-                                            domSharp5 = false
-                                            domNine = false
-                                            domNineSharp5 = false
-                                            domSharp9Flat5 = false
-                                            domSharp9Sharp5 = false
-                                            domFlat9Sharp9Sharp5 = false
-                                            domSharp5Flat9Sharp9Sharp11 = false
-                                            domFlat9 = false
-                                            domSharp9 = false
-                                            dom9Sharp11 = false
-                                            dom13 = false
-                                            dom13Sharp11 = false
-                                            dom13Flat9Sharp11 = false
-                                            dom13Sharp9Sharp11 = false
-
-                                            min9Flat5 = false
-                                            min7Flat5911 = false
-                                            min7Flat5911Flat13 = false
-
-                                            dim79 = false
-                                            dim7911 = false
-                                            dom7sus4 = false
-                                            dom9sus4 = false
-                                            dom13sus4 = false
-                                            dom7sus4Flat9 = false
-                                            dom13sus4Flat9 = false
-                                        }
-                                    }
-                            }
-                            
-                            Text("")
-                            HStack {
-                                Text("Normal")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Spacer()
-                                Toggle(isOn: $normalOn) {}
-                                    .scaleEffect(0.5)
-                                    .padding(.trailing, -100)
-                                    .onChange(of: normalOn) { _, newValue in
-                                        if normalOn {
-                                            major = true
-                                            minor = true
-                                            dim = true
-                                            aug = true
-                                            maj7 = true
-                                            min7 = true
-                                            dom = true
-                                            halfDim7 = true
-                                            dimMaj7 = true
-                                            fullDim7 = true
-                                            superDim = true
-                                            minMaj7 = true
-                                            aug7 = true
-                                        } else {
-                                            major = false
-                                            minor = false
-                                            dim = false
-                                            aug = false
-                                            maj7 = false
-                                            min7 = false
-                                            dom = false
-                                            halfDim7 = false
-                                            dimMaj7 = false
-                                            fullDim7 = false
-                                            superDim = false
-                                            minMaj7 = false
-                                            aug7 = false
-                                        }
-                                    }
-                            }
-                            Divider()
-                            
-                            // Normal
-                            HStack {
-                                Text("Major")
-                                Toggle(isOn: $major){}
-                            } // Major
-                            HStack {
-                                Text("minor")
-                                Toggle(isOn: $minor){}
-                            } // minor
-                            HStack {
-                                Text("diminished")
-                                Toggle(isOn: $dim){}
-                            } // diminished
-                            HStack {
-                                Text("augmented")
-                                Toggle(isOn: $aug){}
-                            } // augmented
-                            HStack {
-                                Text("Major 7th")
-                                Toggle(isOn: $maj7){}
-                            } // Major 7th
-                            HStack {
-                                Text("minor 7th")
-                                Toggle(isOn: $min7){}
-                            } // minor 7th
-                            HStack {
-                                Text("Dominant 7th")
-                                Toggle(isOn: $dom){}
-                            } // Dominant 7th
-                            HStack {
-                                Text("half-diminished 7th")
-                                Toggle(isOn: $halfDim7){}
-                            } // half-diminished 7th
-                            HStack {
-                                Text("diminished Major 7th")
-                                Toggle(isOn: $dimMaj7){}
-                            } // diminished Major 7th
-                            HStack {
-                                Text("fully-diminished 7th")
-                                Toggle(isOn: $fullDim7){}
-                            } // fully diminished 7th
-                            HStack {
-                                Text("super-diminished")
-                                Toggle(isOn: $superDim){}
-                            } // super-diminished
-                            HStack {
-                                Text("minor-Major 7th")
-                                Toggle(isOn: $minMaj7){}
-                            } // minor-Major 7th
-                            HStack {
-                                Text("augmented 7th")
-                                Toggle(isOn: $aug7){}
-                            } // augmented 7th
-                            
-                            Text("")
-                            HStack {
-                                Text("Major extended")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Spacer()
-                            }
-                            Divider()
-                            
-                            // Major extended
-                            HStack {
-                                Text("Maj9")
-                                Toggle(isOn: $maj9){}
-                            } // Maj9
-                            HStack {
-                                Text("Maj#11")
-                                Toggle(isOn: $majSharp11){}
-                            }
-                            HStack {
-                                Text("Maj13")
-                                Toggle(isOn: $maj13){}
-                            }
-                            HStack {
-                                Text("Maj6")
-                                Toggle(isOn: $maj6){}
-                            }
-                            HStack {
-                                Text("Maj6/9")
-                                Toggle(isOn: $maj69){}
-                            }
-                            HStack {
-                                Text("Maj6/9#11")
-                                Toggle(isOn: $maj69Sharp11){}
-                            }
-                            HStack {
-                                Text("Maj6/9(#11,13)")
-                                Toggle(isOn: $maj69Sharp11Add13){}
-                            }
-                            
-                            Text("")
-                            HStack {
-                                Text("minor extended")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Spacer()
-                            }
-                            Divider()
-                            
-                            // minor extended
-                            HStack {
-                                Text("min9")
-                                Toggle(isOn: $min9){}
-                            }
-                            HStack {
-                                Text("min11")
-                                Toggle(isOn: $min11){}
-                            }
-                            HStack {
-                                Text("min13")
-                                Toggle(isOn: $min13){}
-                            }
-                            HStack {
-                                Text("min6")
-                                Toggle(isOn: $min6){}
-                            }
-                            HStack {
-                                Text("min6/9")
-                                Toggle(isOn: $min69){}
-                            }
-                            HStack {
-                                Text("min6/9(11)")
-                                Toggle(isOn: $min69nat11){}
-                            }
-                            HStack {
-                                Text("min6/9(11,13)")
-                                Toggle(isOn: $min691113){}
-                            }
-                            
-                            Text("")
-                            HStack {
-                                Text("Dominant Extended")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Spacer()
-                            }
-                            Divider()
-                            
-                            // Dominant
-                            HStack {
-                                Text("7#5")
-                                Toggle(isOn: $domSharp5){}
-                            }
-                            HStack {
-                                Text("9")
-                                Toggle(isOn: $domNine){}
-                            }
-                            HStack {
-                                Text("9#5")
-                                Toggle(isOn: $domNineSharp5){}
-                            }
-                            HStack {
-                                Text("7(#9b5)")
-                                Toggle(isOn: $domSharp9Flat5) {}
-                            }
-                            HStack {
-                                Text("7(#9#5)")
-                                Toggle(isOn: $domSharp9Sharp5) {}
-                            }
-                            HStack {
-                                Text("7(b9#9#5)")
-                                Toggle(isOn: $domFlat9Sharp9Sharp5) {}
-                            }
-                            HStack {
-                                Text("7(#5b9#9#11)")
-                                Toggle(isOn: $domSharp5Flat9Sharp9Sharp11) {}
-                            }
-                            HStack {
-                                Text("b9")
-                                Toggle(isOn: $domFlat9) {}
-                            }
-                            HStack {
-                                Text("#9")
-                                Toggle(isOn: $domSharp9) {}
-                            }
-                            HStack {
-                                Text("9(#11)")
-                                Toggle(isOn: $dom9Sharp11) {}
-                            }
-                            HStack {
-                                Text("13")
-                                Toggle(isOn: $dom13) {}
-                            }
-                            HStack {
-                                Text("13(#11)")
-                                Toggle(isOn: $dom13Sharp11) {}
-                            }
-                            HStack {
-                                Text("13(b9#11)")
-                                Toggle(isOn: $dom13Flat9Sharp11) {}
-                            }
-                            HStack {
-                                Text("13(#9#11)")
-                                Toggle(isOn: $dom13Sharp9Sharp11) {}
-                            }
-                            
-                            Text("")
-                            HStack {
-                                Text("half-diminished extended")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Spacer()
-                            }
-                            Divider()
-                            
-                            // half-diminished
-                            HStack {
-                                Text("min9(b5)")
-                                Toggle(isOn: $min9Flat5) {}
-                            }
-                            HStack {
-                                Text("min7b5(9,11)")
-                                Toggle(isOn: $min7Flat5911) {}
-                            }
-                            HStack {
-                                Text("min7b5(9,11,b13)")
-                                Toggle(isOn: $min7Flat5911Flat13) {}
-                            }
-                            
-                            Text("")
-                            HStack {
-                                Text("diminished extended")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Spacer()
-                            }
-                            Divider()
-                            
-                            // diminished
-                            HStack {
-                                Text("dim7(9)")
-                                Toggle(isOn: $dim79) {}
-                            }
-                            HStack {
-                                Text("dim7(9,11)")
-                                Toggle(isOn: $dim7911) {}
-                            }
-                            
-                            Text("")
-                            HStack {
-                                Text("Suspended Extended")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Spacer()
-                            }
-                            Divider()
-                            
-                            // suspended
-                            HStack {
-                                Text("7sus4")
-                                Toggle(isOn: $dom7sus4) {}
-                            }
-                            HStack {
-                                Text("9sus4")
-                                Toggle(isOn: $dom9sus4) {}
-                            }
-                            HStack {
-                                Text("13sus4")
-                                Toggle(isOn: $dom13sus4) {}
-                            }
-                            HStack {
-                                Text("7sus4(b9)")
-                                Toggle(isOn: $dom7sus4Flat9) {}
-                            }
-                            HStack {
-                                Text("13sus4(b9)")
-                                Toggle(isOn: $dom13sus4Flat9) {}
-                            }
-                        }
-                        .padding()
-                    }// buttons
-                    .padding()
+                    
                     VStack {
+                        // chord toggle buttons
+                        ScrollView(showsIndicators: false) {
+                            VStack(alignment: .leading, spacing: 12) {
+                                
+                                // Toggle all
+                                Toggle("Toggle All", isOn: Binding(
+                                    get: { chordOptions.allSatisfy { $0.isOn } },
+                                    set: { toggleAll($0) }
+                                ))
+                                HStack {
+                                    
+                                }
+                                
+                                // Group chords by category
+                                ForEach(ChordCategory.allCases, id: \.self) { category in
+                                    if category.rawValue == "Normal" {
+                                        HStack {
+                                            Text(category.rawValue)
+                                                .font(.caption)
+                                                .foregroundStyle(Color.secondary)
+                                            Spacer()
+                                            Toggle(isOn: Binding(
+                                                get: { chordOptions.filter { $0.category == .normal }.allSatisfy { $0.isOn } },
+                                                set: { newValue in
+                                                    for i in chordOptions.indices where chordOptions[i].category == .normal {
+                                                        chordOptions[i].isOn = newValue
+                                                    }
+                                                }
+                                            )) {}
+                                                .scaleEffect(0.5)
+                                                .padding(.trailing, -100)
+                                        }
+                                        .padding(.top, 10)
+                                    } else {
+                                        Text(category.rawValue)
+                                            .font(.caption)
+                                            .foregroundStyle(Color.secondary)
+                                            .padding(.top, 10)
+                                    }
+                                    
+                                    Divider()
+                                    
+                                    ForEach(chordOptions.indices.filter { chordOptions[$0].category == category }, id: \.self) { i in
+                                        HStack {
+                                            Text(chordOptions[i].name)
+                                            Toggle("", isOn: $chordOptions[i].isOn)
+                                        }
+                                    }
+                                    
+                                    Spacer().frame(height: 10)
+                                }
+                            }
+                            .padding()
+                        }
+                        
                         Spacer()
-                        Button("done") {
-                            chooseChords()
+                        
+                        Button("Done") {
                             if chosenChords.isEmpty {
                                 showNoChordsAlert = true
                             } else {
@@ -601,7 +231,7 @@ struct SingleChordView: View {
                             Text("Please select at least one chord before proceeding.")
                         }
                         .padding()
-                    } // done button
+                    }
                 }
             }
         }
@@ -610,270 +240,14 @@ struct SingleChordView: View {
             counter = 0
         }
     }
-    func chooseChords() {
-        if major == true {
-            chosenChords.insert("Major")
-        } else {
-            chosenChords.remove("Major")
+    func toggleAll(_ on: Bool) {
+        for i in chordOptions.indices {
+            chordOptions[i].isOn = on
         }
-        if minor == true {
-            chosenChords.insert("minor")
-        } else {
-            chosenChords.remove("minor")
-        }
-        if dim == true {
-            chosenChords.insert("diminished")
-        } else {
-            chosenChords.remove("diminished")
-        }
-        if aug == true {
-            chosenChords.insert("augmented")
-        } else {
-            chosenChords.remove("augmented")
-        }
-        if maj7 == true {
-            chosenChords.insert("Major 7th")
-        } else {
-            chosenChords.remove("Major 7th")
-        }
-        if min7 == true {
-            chosenChords.insert("minor 7th")
-        } else {
-            chosenChords.remove("minor 7th")
-        }
-        if dom == true {
-            chosenChords.insert("Dominant 7th")
-        } else {
-            chosenChords.remove("Dominant 7th")
-        }
-        if halfDim7 == true {
-            chosenChords.insert("half-diminished 7th")
-        } else {
-            chosenChords.remove("half-diminished 7th")
-        }
-        if dimMaj7 == true {
-            chosenChords.insert("diminished Major 7th")
-        } else {
-            chosenChords.remove("diminished Major 7th")
-        }
-        if fullDim7 == true {
-            chosenChords.insert("fully-diminished 7th")
-        } else {
-            chosenChords.remove("fully-diminished 7th")
-        }
-        if superDim == true {
-            chosenChords.insert("super-diminished")
-        } else {
-            chosenChords.remove("super-diminished")
-        }
-        if minMaj7 == true {
-            chosenChords.insert("minor-Major 7th")
-        } else {
-            chosenChords.remove("minor-Major 7th")
-        }
-        if aug7 == true {
-            chosenChords.insert("augmented 7th")
-        } else {
-            chosenChords.remove("augmented 7th")
-        }
-        
-        if maj9 {
-            chosenChords.insert("Maj9")
-        } else {
-            chosenChords.remove("Maj9")
-        }
-        if majSharp11 {
-            chosenChords.insert("Maj#11")
-        } else {
-            chosenChords.remove("Maj#11")
-        }
-        if maj13 {
-            chosenChords.insert("Maj13")
-        } else {
-            chosenChords.remove("Maj13")
-        }
-        if maj6 {
-            chosenChords.insert("Maj6")
-        } else {
-            chosenChords.remove("Maj6")
-        }
-        if maj69 {
-            chosenChords.insert("Maj6/9")
-        } else {
-            chosenChords.remove("Maj6/9")
-        }
-        if maj69Sharp11 {
-            chosenChords.insert("Maj6/9#11")
-        } else {
-            chosenChords.remove("Maj6/9#11")
-        }
-        if maj69Sharp11Add13 {
-            chosenChords.insert("Maj6/9(#11,13)")
-        } else {
-            chosenChords.remove("Maj6/9(#11,13)")
-        }
-        if min9 {
-            chosenChords.insert("min9")
-        } else {
-            chosenChords.remove("min9")
-        }
-        if min11 {
-            chosenChords.insert("min11")
-        } else {
-            chosenChords.remove("min11")
-        }
-        if min13 {
-            chosenChords.insert("min13")
-        } else {
-            chosenChords.remove("min13")
-        }
-        if min6 {
-            chosenChords.insert("min6")
-        } else {
-            chosenChords.remove("min6")
-        }
-        if min69 {
-            chosenChords.insert("min6/9")
-        } else {
-            chosenChords.remove("min6/9")
-        }
-        if min69nat11 {
-            chosenChords.insert("min6/9(11)")
-        } else {
-            chosenChords.remove("min6/9(11)")
-        }
-        if min691113 {
-            chosenChords.insert("min6/9(11,13)")
-        } else {
-            chosenChords.remove("min6/9(11,13)")
-        }
-        
-        if domSharp5 {
-            chosenChords.insert("7#5")
-        } else {
-            chosenChords.remove("7#5")
-        }
-        if domNine {
-            chosenChords.insert("9")
-        } else {
-            chosenChords.remove("9")
-        }
-        if domNineSharp5 {
-            chosenChords.insert("9#5")
-        } else {
-            chosenChords.remove("9#5")
-        }
-        if domSharp9Flat5 {
-            chosenChords.insert("7(#9b5)")
-        } else {
-            chosenChords.remove("7(#9b5)")
-        }
-        if domSharp9Sharp5 {
-            chosenChords.insert("7(#9#5)")
-        } else {
-            chosenChords.remove("7(#9#5)")
-        }
-        if domFlat9Sharp9Sharp5 {
-            chosenChords.insert("7(b9#9#5)")
-        } else {
-            chosenChords.remove("7(b9#9#5)")
-        }
-        if domSharp5Flat9Sharp9Sharp11 {
-            chosenChords.insert("7(#5b9#9#11)")
-        } else {
-            chosenChords.remove("7(#5b9#9#11)")
-        }
-        if domFlat9 {
-            chosenChords.insert("b9")
-        } else {
-            chosenChords.remove("b9")
-        }
-        if domSharp9 {
-            chosenChords.insert("#9")
-        } else {
-            chosenChords.remove("#9")
-        }
-        if dom9Sharp11 {
-            chosenChords.insert("9(#11)")
-        } else {
-            chosenChords.remove("9(#11)")
-        }
-        if dom13 {
-            chosenChords.insert("13")
-        } else {
-            chosenChords.remove("13")
-        }
-        if dom13Sharp11 {
-            chosenChords.insert("13(#11)")
-        } else {
-            chosenChords.remove("13(#11)")
-        }
-        if dom13Flat9Sharp11 {
-            chosenChords.insert("13(b9#11)")
-        } else {
-            chosenChords.remove("13(b9#11)")
-        }
-        if dom13Sharp9Sharp11 {
-            chosenChords.insert("13(#9#11)")
-        } else {
-            chosenChords.remove("13(#9#11)")
-        }
-        
-        if min9Flat5 {
-            chosenChords.insert("min9(b5)")
-        } else {
-            chosenChords.remove("min9(b5)")
-        }
-        if min7Flat5911 {
-            chosenChords.insert("min7b5(9,11)")
-        } else {
-            chosenChords.remove("min7b5(9,11)")
-        }
-        if min7Flat5911Flat13 {
-            chosenChords.insert("min7b5(9,11,b13)")
-        } else {
-            chosenChords.remove("min7b5(9,11,b13)")
-        }
-        
-        if dim79 {
-            chosenChords.insert("dim7(9)")
-        } else {
-            chosenChords.remove("dim7(9)")
-        }
-        if dim7911 {
-            chosenChords.insert("dim7(9,11)")
-        } else {
-            chosenChords.remove("dim7(9,11)")
-        }
-        
-        if dom7sus4 {
-            chosenChords.insert("7sus4")
-        } else {
-            chosenChords.remove("7sus4")
-        }
-        if dom9sus4 {
-            chosenChords.insert("9sus4")
-        } else {
-            chosenChords.remove("9sus4")
-        }
-        if dom13sus4 {
-            chosenChords.insert("13sus4")
-        } else {
-            chosenChords.remove("13sus4")
-        }
-        if dom7sus4Flat9 {
-            chosenChords.insert("7sus4(b9)")
-        } else {
-            chosenChords.remove("7sus4(b9)")
-        }
-        if dom13sus4Flat9 {
-            chosenChords.insert("13sus4(b9)")
-        } else {
-            chosenChords.remove("13sus4(b9)")
-        }
-    } // for the settings
+    }
     
     func next() {
+        showAnswer = false
         counter += 1
         chords.removeAll()
         rootNote = UInt8(Int.random(in: 52...75)) // 72 is the C above middle C, was 67
@@ -1341,4 +715,21 @@ struct SingleChordView: View {
 
 #Preview {
     SingleChordView()
+}
+
+enum ChordCategory: String, CaseIterable {
+    case normal = "Normal"
+    case majorExtended = "Major Extended"
+    case minorExtended = "Minor Extended"
+    case dominantExtended = "Dominant Extended"
+    case halfDiminishedExtended = "Half-Diminished Extended"
+    case diminishedExtended = "Diminished Extended"
+    case suspendedExtended = "Suspended Extended"
+}
+
+struct ChordOption: Identifiable, Hashable {
+    let id = UUID()
+    let name: String
+    let category: ChordCategory
+    var isOn: Bool
 }
