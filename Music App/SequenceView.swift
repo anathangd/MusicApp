@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import AudioToolbox
+import AVFoundation
 
 struct SequenceView: View {
     
@@ -833,182 +833,29 @@ struct SequenceView: View {
     
     func playSequence() {
         print(notes)
-        /// Create a sequence
-        var sequence : MusicSequence? = nil
-        var musicSequenceStatus = NewMusicSequence(&sequence)
-        var track : MusicTrack? = nil
-        
-        var tempoTrack: MusicTrack?
-        if MusicSequenceGetTempoTrack(sequence!, &tempoTrack) != noErr {
-            assert(tempoTrack != nil, "Cannot get tempo track")
-        }
-
-        //MusicTrackClear(tempoTrack, 0, 1)
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 0.0, tempo) != noErr {
-            print("could not set tempo")
-        } //60 is what it was
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 5.0, 256.0) != noErr {
-            print("could not set tempo") //was set to 256
-        }
-        
-        /// Create a music track containg a sequence and a music track
-        var musicTrack = MusicSequenceNewTrack(sequence!, &track)
-        var time = MusicTimeStamp(1.0)
-
-        
-        
-        // The notes of the song
-        for index:Int in 0..<notes.count {
-            var note = MIDINoteMessage(channel: 0,
-                                       note: notes[index],
-                                       velocity: 100,
-                                       releaseVelocity: 0,
-                                       duration: 1.0)
-            guard let track = track else {fatalError()}
-            musicTrack = MusicTrackNewMIDINoteEvent(track, time, &note)
-            time += 1
-        }
-        // Creating a player
-        var musicPlayer : MusicPlayer? = nil
-        var player = NewMusicPlayer(&musicPlayer)
-
-        player = MusicPlayerSetSequence(musicPlayer!, sequence)
-        player = MusicPlayerStart(musicPlayer!)
+        // Uses PianoSequencePlayer (defined elsewhere in the project) to play via SoundFont.
+        PianoSequencePlayer.shared.play(notes: notes, tempoBPM: tempo)
     }
     
     func playFirst() {
         print(notes)
-        /// Create a sequence
-        var sequence : MusicSequence? = nil
-        var musicSequenceStatus = NewMusicSequence(&sequence)
-        var track : MusicTrack? = nil
-        
-        var tempoTrack: MusicTrack?
-        if MusicSequenceGetTempoTrack(sequence!, &tempoTrack) != noErr {
-            assert(tempoTrack != nil, "Cannot get tempo track")
-        }
-
-        //MusicTrackClear(tempoTrack, 0, 1)
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 0.0, tempo) != noErr {
-            print("could not set tempo")
-        } //60 is what it was
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 5.0, 256.0) != noErr {
-            print("could not set tempo") //was set to 256
-        }
-        
-        /// Create a music track containg a sequence and a music track
-        var musicTrack = MusicSequenceNewTrack(sequence!, &track)
-        var time = MusicTimeStamp(1.0)
-
-        
-        
-        // The notes of the song
-        for index:Int in 0...1 {
-            var note = MIDINoteMessage(channel: 0,
-                                       note: notes[index],
-                                       velocity: 100,
-                                       releaseVelocity: 0,
-                                       duration: 1.0)
-            guard let track = track else {fatalError()}
-            musicTrack = MusicTrackNewMIDINoteEvent(track, time, &note)
-            time += 1
-        }
-        // Creating a player
-        var musicPlayer : MusicPlayer? = nil
-        var player = NewMusicPlayer(&musicPlayer)
-
-        player = MusicPlayerSetSequence(musicPlayer!, sequence)
-        player = MusicPlayerStart(musicPlayer!)
+        guard notes.count >= 2 else { return }
+        let slice = Array(notes[0...1])
+        PianoSequencePlayer.shared.play(notes: slice, tempoBPM: tempo)
     }
     
     func playSecond() {
         print(notes)
-        /// Create a sequence
-        var sequence : MusicSequence? = nil
-        var musicSequenceStatus = NewMusicSequence(&sequence)
-        var track : MusicTrack? = nil
-        
-        var tempoTrack: MusicTrack?
-        if MusicSequenceGetTempoTrack(sequence!, &tempoTrack) != noErr {
-            assert(tempoTrack != nil, "Cannot get tempo track")
-        }
-
-        //MusicTrackClear(tempoTrack, 0, 1)
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 0.0, tempo) != noErr {
-            print("could not set tempo")
-        } //60 is what it was
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 5.0, 256.0) != noErr {
-            print("could not set tempo") //was set to 256
-        }
-        
-        /// Create a music track containg a sequence and a music track
-        var musicTrack = MusicSequenceNewTrack(sequence!, &track)
-        var time = MusicTimeStamp(1.0)
-
-        
-        
-        // The notes of the song
-        for index:Int in 1...2 {
-            var note = MIDINoteMessage(channel: 0,
-                                       note: notes[index],
-                                       velocity: 100,
-                                       releaseVelocity: 0,
-                                       duration: 1.0)
-            guard let track = track else {fatalError()}
-            musicTrack = MusicTrackNewMIDINoteEvent(track, time, &note)
-            time += 1
-        }
-        // Creating a player
-        var musicPlayer : MusicPlayer? = nil
-        var player = NewMusicPlayer(&musicPlayer)
-
-        player = MusicPlayerSetSequence(musicPlayer!, sequence)
-        player = MusicPlayerStart(musicPlayer!)
+        guard notes.count >= 3 else { return }
+        let slice = Array(notes[1...2])
+        PianoSequencePlayer.shared.play(notes: slice, tempoBPM: tempo)
     }
     
     func playThird() {
         print(notes)
-        /// Create a sequence
-        var sequence : MusicSequence? = nil
-        var musicSequenceStatus = NewMusicSequence(&sequence)
-        var track : MusicTrack? = nil
-        
-        var tempoTrack: MusicTrack?
-        if MusicSequenceGetTempoTrack(sequence!, &tempoTrack) != noErr {
-            assert(tempoTrack != nil, "Cannot get tempo track")
-        }
-
-        //MusicTrackClear(tempoTrack, 0, 1)
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 0.0, tempo) != noErr {
-            print("could not set tempo")
-        } //60 is what it was
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 5.0, 256.0) != noErr {
-            print("could not set tempo") //was set to 256
-        }
-        
-        /// Create a music track containg a sequence and a music track
-        var musicTrack = MusicSequenceNewTrack(sequence!, &track)
-        var time = MusicTimeStamp(1.0)
-
-        
-        
-        // The notes of the song
-        for index:Int in 2..<notes.count {
-            var note = MIDINoteMessage(channel: 0,
-                                       note: notes[index],
-                                       velocity: 100,
-                                       releaseVelocity: 0,
-                                       duration: 1.0)
-            guard let track = track else {fatalError()}
-            musicTrack = MusicTrackNewMIDINoteEvent(track, time, &note)
-            time += 1
-        }
-        // Creating a player
-        var musicPlayer : MusicPlayer? = nil
-        var player = NewMusicPlayer(&musicPlayer)
-
-        player = MusicPlayerSetSequence(musicPlayer!, sequence)
-        player = MusicPlayerStart(musicPlayer!)
+        guard notes.count >= 3 else { return }
+        let slice = Array(notes[2..<notes.count])
+        PianoSequencePlayer.shared.play(notes: slice, tempoBPM: tempo)
     }
 }
 

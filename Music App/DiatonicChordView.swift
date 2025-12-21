@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import AudioToolbox
+import AVFoundation
 
 struct DiatonicChordView: View {
     @State var counter = 0
@@ -1066,65 +1066,9 @@ struct DiatonicChordView: View {
         }
     }
     
-    func createMusicSequence(chords: [[UInt8]] ) -> MusicSequence {
-
-        var musicSequence: MusicSequence?
-        var status = NewMusicSequence(&musicSequence)
-        if status != noErr {
-            print(" bad status \(status) creating sequence")
-        }
-        
-        var tempoTrack: MusicTrack?
-        if MusicSequenceGetTempoTrack(musicSequence!, &tempoTrack) != noErr {
-            assert(tempoTrack != nil, "Cannot get tempo track")
-        }
-
-        //MusicTrackClear(tempoTrack, 0, 1)
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 0.0, 58.0) != noErr {
-            print("could not set tempo")
-        } //128.0 was the default
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 4.0, 256.0) != noErr {
-            print("could not set tempo")
-        }
-        
-        
-        // add a track
-        var track: MusicTrack?
-        status = MusicSequenceNewTrack(musicSequence!, &track)
-        if status != noErr {
-            print("error creating track \(status)")
-        }
-        
-      
-        
-        // make some notes and put them on the track
-        var beat: MusicTimeStamp = 0.0
-       
-        for batch in 0..<chords.count {
-            for note: UInt8 in chords[batch] {
-                var mess = MIDINoteMessage(channel: 0,
-                                           note: note,
-                                           velocity: 64,
-                                           releaseVelocity: 0,
-                                           duration: 1.0 )
-                status = MusicTrackNewMIDINoteEvent(track!, beat, &mess)
-                if status != noErr {    print("creating new midi note event \(status)") }
-                
-            }// beat changes after this
-            beat += 1
-        }
-        
-        CAShow(UnsafeMutablePointer<MusicSequence>(musicSequence!))
-        
-        return musicSequence!
-    }
-    
-    func playChords(chords : [[UInt8]]){
-        var musicPlayer : MusicPlayer? = nil
-        var player = NewMusicPlayer(&musicPlayer)
-
-        player = MusicPlayerSetSequence(musicPlayer!, createMusicSequence(chords: chords))
-        player = MusicPlayerStart(musicPlayer!)
+    func playChords(chords: [[UInt8]]) {
+        // One chord per beat (each inner array plays simultaneously)
+        PianoSequencePlayer.shared.playChordBatches(chords: chords, tempoBPM: 58.0)
     }
 }
 

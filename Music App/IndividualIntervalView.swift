@@ -6,7 +6,102 @@
 //
 
 import SwiftUI
-import AudioToolbox
+import AVFoundation
+
+final class PianoSequencePlayer {
+    static let shared = PianoSequencePlayer()
+
+    private let engine = AVAudioEngine()
+    private let sampler = AVAudioUnitSampler()
+    private var isSetup = false
+
+    private func setupIfNeeded() {
+        guard !isSetup else { return }
+
+        engine.attach(sampler)
+        engine.connect(sampler, to: engine.mainMixerNode, format: nil)
+
+        do {
+            try engine.start()
+        } catch {
+            print("AVAudioEngine failed to start: \(error)")
+        }
+
+        // Try to load ANY .sf2 SoundFont bundled with the app.
+        // Put your Korg .sf2 into the app target (Target Membership checked).
+        if let sf2URL = Bundle.main.urls(forResourcesWithExtension: "sf2", subdirectory: nil)?.first {
+            do {
+                try sampler.loadSoundBankInstrument(
+                    at: sf2URL,
+                    program: 0, // Acoustic Grand Piano
+                    bankMSB: UInt8(kAUSampler_DefaultMelodicBankMSB),
+                    bankLSB: 0
+                )
+                print("Loaded SoundFont: \(sf2URL.lastPathComponent)")
+            } catch {
+                print("Failed to load SoundFont: \(error)")
+            }
+        } else {
+            print("No .sf2 found in app bundle. Add the SoundFont to the target.")
+        }
+
+        isSetup = true
+    }
+
+    func play(notes: [UInt8], tempoBPM: Double) {
+        setupIfNeeded()
+        // AVAudioUnitSampler doesn't expose stopAllVoices on all OS versions.
+        // Send an "all notes off" equivalent by stopping the full MIDI note range.
+        for note: UInt8 in 0...127 {
+            sampler.stopNote(note, onChannel: 0)
+        }
+
+        let secondsPerBeat = max(0.05, 60.0 / max(1.0, tempoBPM))
+
+        for (i, n) in notes.enumerated() {
+            let startDelay = secondsPerBeat * Double(i)
+            let stopDelay = startDelay + (secondsPerBeat * 0.9)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + startDelay) { [weak self] in
+                self?.sampler.startNote(n, withVelocity: 100, onChannel: 0)
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + stopDelay) { [weak self] in
+                self?.sampler.stopNote(n, onChannel: 0)
+            }
+        }
+    }
+    
+    func playChordBatches(chords: [[UInt8]], tempoBPM: Double) {
+        setupIfNeeded()
+
+        // "All notes off" safety
+        for note: UInt8 in 0...127 {
+            sampler.stopNote(note, onChannel: 0)
+        }
+
+        let secondsPerBeat = max(0.05, 60.0 / max(1.0, tempoBPM))
+
+        for (i, chord) in chords.enumerated() {
+            let startDelay = secondsPerBeat * Double(i)
+            let stopDelay = startDelay + (secondsPerBeat * 0.9)
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + startDelay) { [weak self] in
+                guard let self else { return }
+                for n in chord {
+                    self.sampler.startNote(n, withVelocity: 90, onChannel: 0)
+                }
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + stopDelay) { [weak self] in
+                guard let self else { return }
+                for n in chord {
+                    self.sampler.stopNote(n, onChannel: 0)
+                }
+            }
+        }
+    }
+}
 
 struct IndividualIntervalView: View {
     
@@ -365,47 +460,7 @@ struct IndividualIntervalView: View {
     
     func playSequence() {
         print(notes)
-        /// Create a sequence
-        var sequence : MusicSequence? = nil
-        var musicSequenceStatus = NewMusicSequence(&sequence)
-        var track : MusicTrack? = nil
-        
-        var tempoTrack: MusicTrack?
-        if MusicSequenceGetTempoTrack(sequence!, &tempoTrack) != noErr {
-            assert(tempoTrack != nil, "Cannot get tempo track")
-        }
-
-        //MusicTrackClear(tempoTrack, 0, 1)
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 0.0, tempo) != noErr {
-            print("could not set tempo")
-        } //60 is what it was
-        if MusicTrackNewExtendedTempoEvent(tempoTrack!, 5.0, 256.0) != noErr {
-            print("could not set tempo") //was set to 256
-        }
-        
-        /// Create a music track containg a sequence and a music track
-        var musicTrack = MusicSequenceNewTrack(sequence!, &track)
-        var time = MusicTimeStamp(1.0)
-
-        
-        
-        // The notes of the song
-        for index:Int in 0..<notes.count {
-            var note = MIDINoteMessage(channel: 0,
-                                       note: notes[index],
-                                       velocity: 100,
-                                       releaseVelocity: 0,
-                                       duration: 1.0)
-            guard let track = track else {fatalError()}
-            musicTrack = MusicTrackNewMIDINoteEvent(track, time, &note)
-            time += 1
-        }
-        // Creating a player
-        var musicPlayer : MusicPlayer? = nil
-        var player = NewMusicPlayer(&musicPlayer)
-
-        player = MusicPlayerSetSequence(musicPlayer!, sequence)
-        player = MusicPlayerStart(musicPlayer!)
+        PianoSequencePlayer.shared.play(notes: notes, tempoBPM: tempo)
     }
 }
 

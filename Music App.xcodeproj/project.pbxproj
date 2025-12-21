@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		44213D0C2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 44213D0B2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 */; };
 		443E45DD2DB7771800EDD2DA /* SingleChordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443E45DC2DB7771800EDD2DA /* SingleChordView.swift */; };
 		445149A22B5EF31400E28230 /* WhistleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445149A12B5EF31400E28230 /* WhistleView.swift */; };
 		445149A42B5EF53B00E28230 /* OcarinaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445149A32B5EF53B00E28230 /* OcarinaView.swift */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		44213D0B2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Motif ES6 Concert Piano.sf2"; sourceTree = "<group>"; };
 		443E45DC2DB7771800EDD2DA /* SingleChordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleChordView.swift; sourceTree = "<group>"; };
 		445149A12B5EF31400E28230 /* WhistleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhistleView.swift; sourceTree = "<group>"; };
 		445149A32B5EF53B00E28230 /* OcarinaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OcarinaView.swift; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				445149A32B5EF53B00E28230 /* OcarinaView.swift */,
 				44E8B51B2AF1270400830851 /* Assets.xcassets */,
 				44E8B51D2AF1270400830851 /* Preview Content */,
+				44213D0B2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 */,
 			);
 			path = "Music App";
 			sourceTree = "<group>";
@@ -154,6 +157,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				44E8B51F2AF1270400830851 /* Preview Assets.xcassets in Resources */,
+				44213D0C2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 in Resources */,
 				44E8B51C2AF1270400830851 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
