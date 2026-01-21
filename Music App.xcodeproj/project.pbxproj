@@ -16,6 +16,8 @@
 		446B60242E5718EF0080B9D8 /* IndividualIntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B60232E5718EF0080B9D8 /* IndividualIntervalView.swift */; };
 		44A99F052B489EA400E876F8 /* SequenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A99F042B489EA400E876F8 /* SequenceView.swift */; };
 		44A99F092B49BC7900E876F8 /* DiatonicChordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A99F082B49BC7900E876F8 /* DiatonicChordView.swift */; };
+		44C1A85A2F09A5630051CC03 /* PianoSequencePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C1A8592F09A5630051CC03 /* PianoSequencePlayer.swift */; };
+		44C1A85C2F09A9E70051CC03 /* MelodyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C1A85B2F09A9E70051CC03 /* MelodyView.swift */; };
 		44E8B5182AF1270200830851 /* Music_AppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E8B5172AF1270200830851 /* Music_AppApp.swift */; };
 		44E8B51A2AF1270200830851 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E8B5192AF1270200830851 /* ContentView.swift */; };
 		44E8B51C2AF1270400830851 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44E8B51B2AF1270400830851 /* Assets.xcassets */; };
@@ -32,6 +34,8 @@
 		446B60232E5718EF0080B9D8 /* IndividualIntervalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualIntervalView.swift; sourceTree = "<group>"; };
 		44A99F042B489EA400E876F8 /* SequenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceView.swift; sourceTree = "<group>"; };
 		44A99F082B49BC7900E876F8 /* DiatonicChordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiatonicChordView.swift; sourceTree = "<group>"; };
+		44C1A8592F09A5630051CC03 /* PianoSequencePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoSequencePlayer.swift; sourceTree = "<group>"; };
+		44C1A85B2F09A9E70051CC03 /* MelodyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MelodyView.swift; sourceTree = "<group>"; };
 		44E8B5142AF1270200830851 /* Music App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Music App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E8B5172AF1270200830851 /* Music_AppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music_AppApp.swift; sourceTree = "<group>"; };
 		44E8B5192AF1270200830851 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -72,6 +76,8 @@
 				44E8B5172AF1270200830851 /* Music_AppApp.swift */,
 				44E8B5192AF1270200830851 /* ContentView.swift */,
 				446B60232E5718EF0080B9D8 /* IndividualIntervalView.swift */,
+				44C1A8592F09A5630051CC03 /* PianoSequencePlayer.swift */,
+				44C1A85B2F09A9E70051CC03 /* MelodyView.swift */,
 				446B60212E57175E0080B9D8 /* CapsuleButton.swift */,
 				443E45DC2DB7771800EDD2DA /* SingleChordView.swift */,
 				44A99F042B489EA400E876F8 /* SequenceView.swift */,
@@ -173,9 +179,11 @@
 				446B60222E57175E0080B9D8 /* CapsuleButton.swift in Sources */,
 				445149A22B5EF31400E28230 /* WhistleView.swift in Sources */,
 				44E8B51A2AF1270200830851 /* ContentView.swift in Sources */,
+				44C1A85A2F09A5630051CC03 /* PianoSequencePlayer.swift in Sources */,
 				44E8B5182AF1270200830851 /* Music_AppApp.swift in Sources */,
 				44A99F092B49BC7900E876F8 /* DiatonicChordView.swift in Sources */,
 				443E45DD2DB7771800EDD2DA /* SingleChordView.swift in Sources */,
+				44C1A85C2F09A9E70051CC03 /* MelodyView.swift in Sources */,
 				4467C7842B5EA761001E679F /* VocalView.swift in Sources */,
 				446B60242E5718EF0080B9D8 /* IndividualIntervalView.swift in Sources */,
 				445149A42B5EF53B00E28230 /* OcarinaView.swift in Sources */,

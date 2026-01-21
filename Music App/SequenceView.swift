@@ -33,6 +33,13 @@ struct SequenceView: View {
     @State var percentage = ""
     @State var isEditing = false
     
+    let phrase: [PianoSequencePlayer.NoteEvent] = [
+        .init(note: 60, startBeat: 0.0, durationBeats: 1.0),  // C quarter
+        .init(note: 62, startBeat: 1.0, durationBeats: 0.5),  // D eighth
+        .init(note: 64, startBeat: 1.5, durationBeats: 0.5),  // E eighth
+        .init(note: 67, startBeat: 2.0, durationBeats: 2.0)   // G half
+    ]
+    
     var body: some View {
         ZStack {
             VStack {

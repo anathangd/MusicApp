@@ -33,6 +33,11 @@ struct ContentView: View {
                             .capsuleButtonStyle()
                     }
                     
+                    NavigationLink(destination: MelodyView()) {
+                        Text("Melodies")
+                            .capsuleButtonStyle()
+                    }
+                    
                     NavigationLink(destination: SingleChordView()) {
                         Text("Single Chords")
                             .capsuleButtonStyle()
