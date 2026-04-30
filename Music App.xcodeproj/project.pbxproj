@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		44213D0C2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 44213D0B2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 */; };
+		44290C362FA2D9B10099EC3D /* TallyMethodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44290C352FA2D9B10099EC3D /* TallyMethodView.swift */; };
+		44290C382FA2D9F90099EC3D /* PianoPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44290C372FA2D9F90099EC3D /* PianoPiece.swift */; };
+		44290C3A2FA2DB280099EC3D /* TallyMethodEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44290C392FA2DB280099EC3D /* TallyMethodEntry.swift */; };
+		44290C3C2FA2E8EF0099EC3D /* PianoPieceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44290C3B2FA2E8EF0099EC3D /* PianoPieceView.swift */; };
 		443E45DD2DB7771800EDD2DA /* SingleChordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443E45DC2DB7771800EDD2DA /* SingleChordView.swift */; };
 		445149A22B5EF31400E28230 /* WhistleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445149A12B5EF31400E28230 /* WhistleView.swift */; };
 		445149A42B5EF53B00E28230 /* OcarinaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445149A32B5EF53B00E28230 /* OcarinaView.swift */; };
@@ -26,6 +30,10 @@
 
 /* Begin PBXFileReference section */
 		44213D0B2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Motif ES6 Concert Piano.sf2"; sourceTree = "<group>"; };
+		44290C352FA2D9B10099EC3D /* TallyMethodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TallyMethodView.swift; sourceTree = "<group>"; };
+		44290C372FA2D9F90099EC3D /* PianoPiece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoPiece.swift; sourceTree = "<group>"; };
+		44290C392FA2DB280099EC3D /* TallyMethodEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TallyMethodEntry.swift; sourceTree = "<group>"; };
+		44290C3B2FA2E8EF0099EC3D /* PianoPieceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoPieceView.swift; sourceTree = "<group>"; };
 		443E45DC2DB7771800EDD2DA /* SingleChordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleChordView.swift; sourceTree = "<group>"; };
 		445149A12B5EF31400E28230 /* WhistleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhistleView.swift; sourceTree = "<group>"; };
 		445149A32B5EF53B00E28230 /* OcarinaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OcarinaView.swift; sourceTree = "<group>"; };
@@ -75,6 +83,10 @@
 			children = (
 				44E8B5172AF1270200830851 /* Music_AppApp.swift */,
 				44E8B5192AF1270200830851 /* ContentView.swift */,
+				44290C352FA2D9B10099EC3D /* TallyMethodView.swift */,
+				44290C3B2FA2E8EF0099EC3D /* PianoPieceView.swift */,
+				44290C372FA2D9F90099EC3D /* PianoPiece.swift */,
+				44290C392FA2DB280099EC3D /* TallyMethodEntry.swift */,
 				446B60232E5718EF0080B9D8 /* IndividualIntervalView.swift */,
 				44C1A8592F09A5630051CC03 /* PianoSequencePlayer.swift */,
 				44C1A85B2F09A9E70051CC03 /* MelodyView.swift */,
@@ -177,10 +189,14 @@
 			files = (
 				44A99F052B489EA400E876F8 /* SequenceView.swift in Sources */,
 				446B60222E57175E0080B9D8 /* CapsuleButton.swift in Sources */,
+				44290C382FA2D9F90099EC3D /* PianoPiece.swift in Sources */,
+				44290C3A2FA2DB280099EC3D /* TallyMethodEntry.swift in Sources */,
 				445149A22B5EF31400E28230 /* WhistleView.swift in Sources */,
 				44E8B51A2AF1270200830851 /* ContentView.swift in Sources */,
 				44C1A85A2F09A5630051CC03 /* PianoSequencePlayer.swift in Sources */,
+				44290C3C2FA2E8EF0099EC3D /* PianoPieceView.swift in Sources */,
 				44E8B5182AF1270200830851 /* Music_AppApp.swift in Sources */,
+				44290C362FA2D9B10099EC3D /* TallyMethodView.swift in Sources */,
 				44A99F092B49BC7900E876F8 /* DiatonicChordView.swift in Sources */,
 				443E45DD2DB7771800EDD2DA /* SingleChordView.swift in Sources */,
 				44C1A85C2F09A9E70051CC03 /* MelodyView.swift in Sources */,
