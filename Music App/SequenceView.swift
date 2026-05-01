@@ -62,7 +62,7 @@ struct SequenceView: View {
                                 Image(systemName: "figure.strengthtraining.traditional")
                                     .font(.system(size: 20))
                                     .padding(5)
-                                    .background(.gray.opacity(0.3), in: Circle())
+                                    .background(.gray, in: Circle())
                                     .foregroundStyle(practice ? Color.blue : Color.black)
                             }
                             if !practice {
@@ -94,7 +94,7 @@ struct SequenceView: View {
                 }
                 .foregroundStyle(.black)
                 .padding()
-                .background(.gray.opacity(0.5))
+                .background(.gray)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 
                 HStack {
@@ -105,7 +105,7 @@ struct SequenceView: View {
                     .font(.caption)
                     .foregroundStyle(.black)
                     
-                    .background(.gray.opacity(0.5))
+                    .background(.gray)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     
                     Button("Second") {
@@ -114,7 +114,7 @@ struct SequenceView: View {
                     .buttonStyle(.bordered)
                     .font(.caption)
                     .foregroundStyle(.black)
-                    .background(.gray.opacity(0.5))
+                    .background(.gray)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     
                     if fourNote {
@@ -124,7 +124,7 @@ struct SequenceView: View {
                         .buttonStyle(.bordered)
                         .font(.caption)
                         .foregroundStyle(.black)
-                        .background(.gray.opacity(0.5))
+                        .background(.gray)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }

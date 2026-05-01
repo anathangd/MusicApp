@@ -37,7 +37,7 @@ struct MelodyView: View {
     private var pairButtonsArea: some View {
         let pairCount = max(0, notes.count - 1)
         let perRow = 4
-        let rowCount = min(4, Int(ceil(Double(pairCount) / Double(perRow))))
+        let rowCount = Int(ceil(Double(pairCount) / Double(perRow)))
 
         return VStack(spacing: 8) {
             ForEach(0..<rowCount, id: \.self) { row in
@@ -53,7 +53,7 @@ struct MelodyView: View {
                             playPair(startIndex: i)
                         } label: {
                             Text(ordinalLabel(i))
-                                .foregroundStyle(dist > 2 ? .red : .primary)
+                                .foregroundStyle(dist > 2 ? .red : .black)
                         }
                         .melodyMiniButtonStyle()
                     }
@@ -94,7 +94,7 @@ struct MelodyView: View {
                 }
                 .foregroundStyle(.black)
                 .padding()
-                .background(.gray.opacity(0.5))
+                .background(.gray)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .padding()
                 
@@ -107,7 +107,7 @@ struct MelodyView: View {
                 }
                 .foregroundStyle(.black)
                 .padding()
-                .background(.gray.opacity(0.5))
+                .background(.gray)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .padding(20)
             }
@@ -224,7 +224,7 @@ private struct MelodyMiniButtonStyle: ViewModifier {
         content
             .buttonStyle(.bordered)
             .font(.caption)
-            .background(.gray.opacity(0.5))
+            .background(.gray)
             .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }

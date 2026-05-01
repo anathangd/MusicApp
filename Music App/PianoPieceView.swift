@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct PianoPieceView: View {
     @Environment(\.modelContext) private var modelContext
@@ -17,8 +18,25 @@ struct PianoPieceView: View {
     @State private var renameSectionName = ""
     @State private var renameEntryID: UUID?
     @State private var renameSectionIndex: Int?
+    @State private var entryPendingDeletion: TallyMethodEntry?
     @FocusState private var focusedEntryID: UUID?
     private let calendar = Calendar.current
+
+    private func playLightHaptic() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+    }
+
+    private func playMediumHaptic() {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+    }
+
+    private func playSuccessHaptic() {
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+    }
+
+    private func playWarningHaptic() {
+        UINotificationFeedbackGenerator().notificationOccurred(.warning)
+    }
 
     private var sortedEntries: [TallyMethodEntry] {
         piece.entries.sorted {
@@ -65,7 +83,7 @@ struct PianoPieceView: View {
     var body: some View {
         List {
             ForEach(sortedEntries) { entry in
-                Section(dayHeader(for: entry)) {
+                Section {
                     ForEach(sectionRows(for: entry)) { row in
                         let i = row.index
                         HStack {
@@ -80,28 +98,33 @@ struct PianoPieceView: View {
                                     .font(.system(size: 30))
                                     .foregroundStyle(.blue)
                             }
-                            Button {
-                                incrementSection(entry: entry, index: i)
-                            } label: {
-                                Image(systemName: "plus")
-                                    .font(.system(size: 30))
-                                    .foregroundStyle(.blue)
-                            }
-                            .buttonStyle(.plain)
-                            .frame(width: 44, height: 44)
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.blue, lineWidth: 2)
-                            )
-                            .simultaneousGesture(
-                                LongPressGesture(minimumDuration: 0.5)
-                                    .onEnded { _ in
-                                        decrementSection(entry: entry, index: i)
-                                    }
-                            )
+                            Image(systemName: "plus")
+                                .font(.system(size: 30))
+                                .foregroundStyle(.blue)
+                                .frame(width: 44, height: 44)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(Color.blue, lineWidth: 2)
+                                )
+                                .contentShape(Rectangle())
+                                .gesture(
+                                    LongPressGesture(minimumDuration: 0.5)
+                                        .onEnded { _ in
+                                            decrementSection(entry: entry, index: i)
+                                        }
+                                        .exclusively(before: TapGesture().onEnded {
+                                            incrementSection(entry: entry, index: i)
+                                        })
+                                )
+                                .accessibilityLabel("Increment section")
+                                .accessibilityHint("Tap to increase. Long press to decrease.")
                         }
                         .padding(.vertical, 2)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button("Delete", role: .destructive) {
+                                deleteSection(entry: entry, index: i)
+                            }
+
                             if isSectionMemorized(entry: entry, index: i) {
                                 Button("Unmemorize") {
                                     setSectionMemorized(false, entry: entry, index: i)
@@ -131,7 +154,6 @@ struct PianoPieceView: View {
                                     save()
                                 }
                                 .buttonStyle(.bordered)
-                                .font(.caption)
                             }
 
                             Button("Custom") {
@@ -139,7 +161,6 @@ struct PianoPieceView: View {
                                 showingCustomSectionSheet = true
                             }
                             .buttonStyle(.bordered)
-                            .font(.caption)
                         }
                     }
                     .padding(.vertical, 2)
@@ -159,11 +180,23 @@ struct PianoPieceView: View {
                             ),
                             axis: .vertical
                         )
-                        .lineLimit(1...3)
+                        .lineLimit(1...)
                         .textFieldStyle(.roundedBorder)
                         .focused($focusedEntryID, equals: entry.id)
                     }
                     .padding(.top, 4)
+                } header: {
+                    HStack {
+                        Text(dayHeader(for: entry))
+                        Spacer()
+                        Menu {
+                            Button("Delete Session", role: .destructive) {
+                                entryPendingDeletion = entry
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                        }
+                    }
                 }
             }
         }
@@ -217,9 +250,30 @@ struct PianoPieceView: View {
         } message: {
             Text("Long-press a section to edit its name.")
         }
+        .confirmationDialog(
+            "Delete this session?",
+            isPresented: Binding(
+                get: { entryPendingDeletion != nil },
+                set: { if !$0 { entryPendingDeletion = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete Session", role: .destructive) {
+                if let entry = entryPendingDeletion {
+                    deleteEntry(entry)
+                }
+                entryPendingDeletion = nil
+            }
+            Button("Cancel", role: .cancel) {
+                entryPendingDeletion = nil
+            }
+        } message: {
+            Text("This will delete the entire session, including all section counts and notes.")
+        }
     }
 
     private func addDay() {
+        playSuccessHaptic()
         let now = Date()
         let todayEntries = piece.entries.filter { calendar.isDate($0.dateCreated, inSameDayAs: now) }
 
@@ -242,6 +296,7 @@ struct PianoPieceView: View {
     private func addCustomSection() {
         let trimmedName = customSectionName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else { return }
+        playSuccessHaptic()
 
         if let latestEntry = sortedEntries.first, !latestEntry.sections.contains(trimmedName) {
             latestEntry.sections.append(trimmedName)
@@ -256,6 +311,7 @@ struct PianoPieceView: View {
 
     private func beginRenameSection(entry: TallyMethodEntry, index: Int) {
         guard entry.sections.indices.contains(index) else { return }
+        playMediumHaptic()
         renameEntryID = entry.id
         renameSectionIndex = index
         renameSectionName = entry.sections[index]
@@ -284,6 +340,7 @@ struct PianoPieceView: View {
 
         entry.sections[sectionIndex] = trimmed
         clearRenameState()
+        playSuccessHaptic()
         save()
     }
 
@@ -312,6 +369,7 @@ struct PianoPieceView: View {
         }
         updated[index] = isMemorized
         entry.memorized = updated
+        playMediumHaptic()
         save()
     }
 
@@ -323,6 +381,7 @@ struct PianoPieceView: View {
         }
         updated[index] += 1
         entry.reps = updated
+        playLightHaptic()
         save()
     }
 
@@ -334,6 +393,36 @@ struct PianoPieceView: View {
         }
         updated[index] = max(0, updated[index] - 1)
         entry.reps = updated
+        playWarningHaptic()
+        save()
+    }
+
+    private func deleteSection(entry: TallyMethodEntry, index: Int) {
+        guard entry.sections.indices.contains(index) else { return }
+
+        var updatedSections = entry.sections
+        updatedSections.remove(at: index)
+        entry.sections = updatedSections
+
+        if entry.reps.indices.contains(index) {
+            var updatedReps = entry.reps
+            updatedReps.remove(at: index)
+            entry.reps = updatedReps
+        }
+
+        if entry.memorized.indices.contains(index) {
+            var updatedMemorized = entry.memorized
+            updatedMemorized.remove(at: index)
+            entry.memorized = updatedMemorized
+        }
+
+        playWarningHaptic()
+        save()
+    }
+
+    private func deleteEntry(_ entry: TallyMethodEntry) {
+        playWarningHaptic()
+        modelContext.delete(entry)
         save()
     }
 
@@ -349,6 +438,7 @@ struct PianoPieceView: View {
         }
         return "Day \(entry.day) - \(dateText)"
     }
+
 }
 
 private struct SectionRow: Identifiable {

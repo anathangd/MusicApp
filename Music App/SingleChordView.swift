@@ -96,7 +96,7 @@ struct SingleChordView: View {
     var body: some View {
         ZStack {
             Rectangle()
-                .foregroundStyle(.white)
+                .foregroundStyle(Color(.systemBackground))
                 .ignoresSafeArea()
                 .onTapGesture {
                     showAnswer = true
@@ -123,16 +123,19 @@ struct SingleChordView: View {
                 Text("Score: " + String(counter))
                     .font(.system(size: 30))
                     .padding()
+                    .allowsHitTesting(false)
                 Text("Root Note:")
                     .font(.system(size: 30))
+                    .allowsHitTesting(false)
                 Text(rootNoteLetter)
                     .font(.system(size: 80))
+                    .allowsHitTesting(false)
                 Button("Play Chords") {
                     playChords(chords: chords)
                 }
                 .foregroundStyle(.black)
                 .padding()
-                .background(.gray.opacity(0.5))
+                .background(.gray)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 
                 Button("Next") {
@@ -140,7 +143,7 @@ struct SingleChordView: View {
                 }
                 .foregroundStyle(.black)
                 .padding()
-                .background(.gray.opacity(0.5))
+                .background(.gray)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .padding()
                 
@@ -149,95 +152,89 @@ struct SingleChordView: View {
             VStack {
                 Spacer()
                 Text(singlesAnswer)
-                    .foregroundStyle(showAnswer ? Color.primary : Color.white)
+                    .opacity(showAnswer ? 1 : 0)
                     .font(.subheadline)
             } // answer
             
-            if settings {
-                ZStack {
-                    Rectangle()
-                        .foregroundStyle(Color.white)
-                        .ignoresSafeArea()
-                    
-                    VStack {
-                        // chord toggle buttons
-                        ScrollView(showsIndicators: false) {
-                            VStack(alignment: .leading, spacing: 12) {
-                                
-                                // Toggle all
-                                Toggle("Toggle All", isOn: Binding(
-                                    get: { chordOptions.allSatisfy { $0.isOn } },
-                                    set: { toggleAll($0) }
-                                ))
-                                HStack {
-                                    
-                                }
-                                
-                                // Group chords by category
-                                ForEach(ChordCategory.allCases, id: \.self) { category in
-                                    if category.rawValue == "Normal" {
-                                        HStack {
-                                            Text(category.rawValue)
-                                                .font(.caption)
-                                                .foregroundStyle(Color.secondary)
-                                            Spacer()
-                                            Toggle(isOn: Binding(
-                                                get: { chordOptions.filter { $0.category == .normal }.allSatisfy { $0.isOn } },
-                                                set: { newValue in
-                                                    for i in chordOptions.indices where chordOptions[i].category == .normal {
-                                                        chordOptions[i].isOn = newValue
-                                                    }
-                                                }
-                                            )) {}
-                                                .scaleEffect(0.5)
-                                                .padding(.trailing, -100)
-                                        }
-                                        .padding(.top, 10)
-                                    } else {
-                                        Text(category.rawValue)
-                                            .font(.caption)
-                                            .foregroundStyle(Color.secondary)
-                                            .padding(.top, 10)
-                                    }
-                                    
-                                    Divider()
-                                    
-                                    ForEach(chordOptions.indices.filter { chordOptions[$0].category == category }, id: \.self) { i in
-                                        HStack {
-                                            Text(chordOptions[i].name)
-                                            Toggle("", isOn: $chordOptions[i].isOn)
-                                        }
-                                    }
-                                    
-                                    Spacer().frame(height: 10)
-                                }
-                            }
-                            .padding()
-                        }
-                        
-                        Spacer()
-                        
-                        Button("Done") {
-                            if chosenChords.isEmpty {
-                                showNoChordsAlert = true
-                            } else {
-                                settings = false
-                                next()
-                            }
-                        }
-                        .alert("No chords selected", isPresented: $showNoChordsAlert) {
-                            Button("My bad", role: .cancel) { }
-                        } message: {
-                            Text("Please select at least one chord before proceeding.")
-                        }
-                        .padding()
-                    }
-                }
-            }
+            // settings sheet handled below
         }
         .onAppear {
             next()
             counter = 0
+        }
+        .fullScreenCover(isPresented: $settings) {
+            settingsView
+        }
+    }
+
+    private var settingsView: some View {
+        NavigationStack {
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 12) {
+                    Toggle("Toggle All", isOn: Binding(
+                        get: { chordOptions.allSatisfy { $0.isOn } },
+                        set: { toggleAll($0) }
+                    ))
+
+                    ForEach(ChordCategory.allCases, id: \.self) { category in
+                        if category.rawValue == "Normal" {
+                            HStack {
+                                Text(category.rawValue)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                                Toggle(isOn: Binding(
+                                    get: { chordOptions.filter { $0.category == .normal }.allSatisfy { $0.isOn } },
+                                    set: { newValue in
+                                        for i in chordOptions.indices where chordOptions[i].category == .normal {
+                                            chordOptions[i].isOn = newValue
+                                        }
+                                    }
+                                )) {}
+                                .scaleEffect(0.5)
+                                .labelsHidden()
+                            }
+                            .padding(.top, 10)
+                        } else {
+                            Text(category.rawValue)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .padding(.top, 10)
+                        }
+
+                        Divider()
+
+                        ForEach(chordOptions.indices.filter { chordOptions[$0].category == category }, id: \.self) { i in
+                            HStack {
+                                Text(chordOptions[i].name)
+                                Spacer()
+                                Toggle("", isOn: $chordOptions[i].isOn)
+                                    .labelsHidden()
+                            }
+                        }
+                    }
+                }
+                .padding()
+            }
+            .background(Color(.systemBackground))
+            .navigationTitle("Chord Settings")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        if chosenChords.isEmpty {
+                            showNoChordsAlert = true
+                        } else {
+                            settings = false
+                            next()
+                        }
+                    }
+                }
+            }
+            .alert("No chords selected", isPresented: $showNoChordsAlert) {
+                Button("My bad", role: .cancel) { }
+            } message: {
+                Text("Please select at least one chord before proceeding.")
+            }
         }
     }
     func toggleAll(_ on: Bool) {

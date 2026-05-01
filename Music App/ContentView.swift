@@ -16,9 +16,6 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Rectangle()
-                    .ignoresSafeArea()
-                    .foregroundStyle(.white)
                 VStack {
                     Text("Ear Trainer!")
                         .font(.system(size: 30))

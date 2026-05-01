@@ -42,7 +42,7 @@ struct IndividualIntervalView: View {
     var body: some View {
         ZStack {
             Rectangle()
-                .foregroundStyle(.white)
+                .foregroundStyle(Color(.systemBackground))
                 .ignoresSafeArea()
                 .onTapGesture {
                     showAnswer = true
@@ -73,7 +73,7 @@ struct IndividualIntervalView: View {
                                 Image(systemName: "figure.strengthtraining.traditional")
                                     .font(.system(size: 20))
                                     .padding(5)
-                                    .background(.gray.opacity(0.3), in: Circle())
+                                    .background(.gray, in: Circle())
                                     .foregroundStyle(practice ? Color.blue : Color.black)
                             }
                             if !practice {
@@ -105,7 +105,7 @@ struct IndividualIntervalView: View {
                 }
                 .foregroundStyle(.black)
                 .padding()
-                .background(.gray.opacity(0.5))
+                .background(Color(.gray))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 
                 HStack {
@@ -167,98 +167,20 @@ struct IndividualIntervalView: View {
                 .padding()
                 if practice {
                     Text(incorrectAnswers[0])
-                        .foregroundStyle(showAnswer ? Color.primary : Color.white)
+                        .opacity(showAnswer ? 1 : 0)
                         .font(.caption)
                 } else {
                     Text(atonalAnswerString)
-                        .foregroundStyle(showAnswer ? Color.primary : Color.white)
+                        .opacity(showAnswer ? 1 : 0)
                         .font(.caption)
                 }
                 
             }
             if practiceDone {
                 Rectangle()
-                    .foregroundStyle(Color.white)
+                    .foregroundStyle(Color(.systemBackground))
                     .ignoresSafeArea()
                 Text("You did it!🎉")
-            }
-            if settings {
-                Rectangle()
-                    .ignoresSafeArea()
-                    .foregroundStyle(.white)
-                VStack {
-                    Text("Interval range")
-                        .font(.title)
-                    HStack {
-                        VStack {
-                            Text("Lowest")
-                                .font(.title2)
-                            HStack {
-                                Button("-"){
-                                    if lowest > absoluteLowest {
-                                        lowest -= 1
-                                        UserDefaults.standard.set(lowest, forKey: "lowest")
-                                    }
-                                }
-                                .foregroundStyle(.black)
-                                .padding(7)
-                                .background(.gray.opacity(0.5))
-                                .clipShape(RoundedRectangle(cornerRadius: 5))
-                                Text(String(lowest))
-                                    .font(.title)
-                                    .monospacedDigit()
-                                Button("+") {
-                                    if highest - lowest > 12 {
-                                        lowest += 1
-                                        UserDefaults.standard.set(lowest, forKey: "lowest")
-                                    }
-                                }
-                                .foregroundStyle(.black)
-                                .padding(7)
-                                .background(.gray.opacity(0.5))
-                                .clipShape(RoundedRectangle(cornerRadius: 5))
-                            }
-                        }
-                        .padding()
-                        VStack {
-                            Text("Highest")
-                                .font(.title2)
-                            HStack {
-                                Button("-"){
-                                    if highest - lowest > 12 {
-                                        highest -= 1
-                                        UserDefaults.standard.set(highest, forKey: "highest")
-                                    }
-                                }
-                                .foregroundStyle(.black)
-                                .padding(7)
-                                .background(.gray.opacity(0.5))
-                                .clipShape(RoundedRectangle(cornerRadius: 5))
-                                Text(String(highest))
-                                    .font(.title)
-                                    .monospacedDigit()
-                                Button("+") {
-                                    if highest < absoluteHighest {
-                                        highest += 1
-                                        UserDefaults.standard.set(highest, forKey: "highest")
-                                    }
-                                }
-                                .foregroundStyle(.black)
-                                .padding(7)
-                                .background(.gray.opacity(0.5))
-                                .clipShape(RoundedRectangle(cornerRadius: 5))
-                            }
-                        }
-                        .padding()
-                    }
-                }
-                VStack {
-                    Spacer()
-                    Button("done") {
-                        settings = false
-                        next()
-                    }
-                }
             }
         }
         .onAppear {
@@ -266,6 +188,100 @@ struct IndividualIntervalView: View {
             incorrectAnswers.removeAll()
             next()
             counter = 0
+        }
+        .fullScreenCover(isPresented: $settings) {
+            settingsView
+        }
+    }
+    
+    private var settingsView: some View {
+        NavigationStack {
+            VStack(spacing: 24) {
+                Text("Interval range")
+                    .font(.title)
+
+                HStack {
+                    VStack {
+                        Text("Lowest")
+                            .font(.title2)
+                        HStack {
+                            Button("-") {
+                                if lowest > absoluteLowest {
+                                    lowest -= 1
+                                    UserDefaults.standard.set(lowest, forKey: "lowest")
+                                }
+                            }
+                            .foregroundStyle(.primary)
+                            .padding(7)
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+
+                            Text(String(lowest))
+                                .font(.title)
+                                .monospacedDigit()
+
+                            Button("+") {
+                                if highest - lowest > 12 {
+                                    lowest += 1
+                                    UserDefaults.standard.set(lowest, forKey: "lowest")
+                                }
+                            }
+                            .foregroundStyle(.primary)
+                            .padding(7)
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                        }
+                    }
+                    .padding()
+
+                    VStack {
+                        Text("Highest")
+                            .font(.title2)
+                        HStack {
+                            Button("-") {
+                                if highest - lowest > 12 {
+                                    highest -= 1
+                                    UserDefaults.standard.set(highest, forKey: "highest")
+                                }
+                            }
+                            .foregroundStyle(.primary)
+                            .padding(7)
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+
+                            Text(String(highest))
+                                .font(.title)
+                                .monospacedDigit()
+
+                            Button("+") {
+                                if highest < absoluteHighest {
+                                    highest += 1
+                                    UserDefaults.standard.set(highest, forKey: "highest")
+                                }
+                            }
+                            .foregroundStyle(.primary)
+                            .padding(7)
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                        }
+                    }
+                    .padding()
+                }
+
+                Spacer()
+            }
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(.systemBackground))
+            .navigationTitle("")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        settings = false
+                        next()
+                    }
+                }
+            }
         }
     }
     

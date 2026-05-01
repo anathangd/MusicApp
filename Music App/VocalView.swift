@@ -53,7 +53,7 @@ struct VocalView: View {
                 }
                 .foregroundStyle(.black)
                 .padding()
-                .background(.gray.opacity(0.5))
+                .background(.gray)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 
                 HStack {
@@ -64,7 +64,7 @@ struct VocalView: View {
                     .font(.caption)
                     .foregroundStyle(.black)
                     
-                    .background(.gray.opacity(0.5))
+                    .background(.gray)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     
                     Button("Second") {
@@ -73,7 +73,7 @@ struct VocalView: View {
                     .buttonStyle(.bordered)
                     .font(.caption)
                     .foregroundStyle(.black)
-                    .background(.gray.opacity(0.5))
+                    .background(.gray)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     
                     if fourNote {
@@ -83,7 +83,7 @@ struct VocalView: View {
                         .buttonStyle(.bordered)
                         .font(.caption)
                         .foregroundStyle(.black)
-                        .background(.gray.opacity(0.5))
+                        .background(.gray)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
@@ -109,7 +109,7 @@ struct VocalView: View {
             }
             if individual {
                 Rectangle()
-                    .foregroundStyle(Color.white)
+                    .foregroundStyle(Color(.systemBackground))
                 VStack {
                     HStack {
                         Spacer()
@@ -131,12 +131,13 @@ struct VocalView: View {
                     }
                     .foregroundStyle(.black)
                     .padding()
-                    .background(.gray.opacity(0.5))
+                    .background(.gray)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     
                     Button("next") {
                         next()
-                    }.padding()
+                    }
+                    .padding()
                 }
             }
         }
