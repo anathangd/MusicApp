@@ -20,6 +20,7 @@ struct SingleChordView: View {
     @State var settings = false
     
     @State private var showNoChordsAlert = false
+    private let chordOptionsStorageKey = "SingleChordView.selectedChordNames"
     
     @State private var chordOptions: [ChordOption] = [
         // Normal
@@ -38,54 +39,54 @@ struct SingleChordView: View {
         .init(name: "augmented 7th", category: .normal, isOn: true),
 
         // Major Extended
-        .init(name: "Maj9", category: .majorExtended, isOn: true),
-        .init(name: "Maj#11", category: .majorExtended, isOn: true),
-        .init(name: "Maj13", category: .majorExtended, isOn: true),
-        .init(name: "Maj6", category: .majorExtended, isOn: true),
-        .init(name: "Maj6/9", category: .majorExtended, isOn: true),
-        .init(name: "Maj6/9#11", category: .majorExtended, isOn: true),
-        .init(name: "Maj6/9(#11,13)", category: .majorExtended, isOn: true),
+        .init(name: "Maj9", category: .majorExtended, isOn: false),
+        .init(name: "Maj#11", category: .majorExtended, isOn: false),
+        .init(name: "Maj13", category: .majorExtended, isOn: false),
+        .init(name: "Maj6", category: .majorExtended, isOn: false),
+        .init(name: "Maj6/9", category: .majorExtended, isOn: false),
+        .init(name: "Maj6/9#11", category: .majorExtended, isOn: false),
+        .init(name: "Maj6/9(#11,13)", category: .majorExtended, isOn: false),
 
         // Minor Extended
-        .init(name: "min9", category: .minorExtended, isOn: true),
-        .init(name: "min11", category: .minorExtended, isOn: true),
-        .init(name: "min13", category: .minorExtended, isOn: true),
-        .init(name: "min6", category: .minorExtended, isOn: true),
-        .init(name: "min6/9", category: .minorExtended, isOn: true),
-        .init(name: "min6/9(11)", category: .minorExtended, isOn: true),
-        .init(name: "min6/9(11,13)", category: .minorExtended, isOn: true),
+        .init(name: "min9", category: .minorExtended, isOn: false),
+        .init(name: "min11", category: .minorExtended, isOn: false),
+        .init(name: "min13", category: .minorExtended, isOn: false),
+        .init(name: "min6", category: .minorExtended, isOn: false),
+        .init(name: "min6/9", category: .minorExtended, isOn: false),
+        .init(name: "min6/9(11)", category: .minorExtended, isOn: false),
+        .init(name: "min6/9(11,13)", category: .minorExtended, isOn: false),
 
         // Dominant Extended
-        .init(name: "7#5", category: .dominantExtended, isOn: true),
-        .init(name: "9", category: .dominantExtended, isOn: true),
-        .init(name: "9#5", category: .dominantExtended, isOn: true),
-        .init(name: "7(#9b5)", category: .dominantExtended, isOn: true),
-        .init(name: "7(#9#5)", category: .dominantExtended, isOn: true),
-        .init(name: "7(b9#9#5)", category: .dominantExtended, isOn: true),
-        .init(name: "7(#5b9#9#11)", category: .dominantExtended, isOn: true),
-        .init(name: "b9", category: .dominantExtended, isOn: true),
-        .init(name: "#9", category: .dominantExtended, isOn: true),
-        .init(name: "9(#11)", category: .dominantExtended, isOn: true),
-        .init(name: "13", category: .dominantExtended, isOn: true),
-        .init(name: "13(#11)", category: .dominantExtended, isOn: true),
-        .init(name: "13(b9#11)", category: .dominantExtended, isOn: true),
-        .init(name: "13(#9#11)", category: .dominantExtended, isOn: true),
+        .init(name: "7#5", category: .dominantExtended, isOn: false),
+        .init(name: "9", category: .dominantExtended, isOn: false),
+        .init(name: "9#5", category: .dominantExtended, isOn: false),
+        .init(name: "7(#9b5)", category: .dominantExtended, isOn: false),
+        .init(name: "7(#9#5)", category: .dominantExtended, isOn: false),
+        .init(name: "7(b9#9#5)", category: .dominantExtended, isOn: false),
+        .init(name: "7(#5b9#9#11)", category: .dominantExtended, isOn: false),
+        .init(name: "b9", category: .dominantExtended, isOn: false),
+        .init(name: "#9", category: .dominantExtended, isOn: false),
+        .init(name: "9(#11)", category: .dominantExtended, isOn: false),
+        .init(name: "13", category: .dominantExtended, isOn: false),
+        .init(name: "13(#11)", category: .dominantExtended, isOn: false),
+        .init(name: "13(b9#11)", category: .dominantExtended, isOn: false),
+        .init(name: "13(#9#11)", category: .dominantExtended, isOn: false),
 
         // Half-Diminished Extended
-        .init(name: "min9(b5)", category: .halfDiminishedExtended, isOn: true),
-        .init(name: "min7b5(9,11)", category: .halfDiminishedExtended, isOn: true),
-        .init(name: "min7b5(9,11,b13)", category: .halfDiminishedExtended, isOn: true),
+        .init(name: "min9(b5)", category: .halfDiminishedExtended, isOn: false),
+        .init(name: "min7b5(9,11)", category: .halfDiminishedExtended, isOn: false),
+        .init(name: "min7b5(9,11,b13)", category: .halfDiminishedExtended, isOn: false),
 
         // Diminished Extended
-        .init(name: "dim7(9)", category: .diminishedExtended, isOn: true),
-        .init(name: "dim7(9,11)", category: .diminishedExtended, isOn: true),
+        .init(name: "dim7(9)", category: .diminishedExtended, isOn: false),
+        .init(name: "dim7(9,11)", category: .diminishedExtended, isOn: false),
 
         // Suspended Extended
-        .init(name: "7sus4", category: .suspendedExtended, isOn: true),
-        .init(name: "9sus4", category: .suspendedExtended, isOn: true),
-        .init(name: "13sus4", category: .suspendedExtended, isOn: true),
-        .init(name: "7sus4(b9)", category: .suspendedExtended, isOn: true),
-        .init(name: "13sus4(b9)", category: .suspendedExtended, isOn: true),
+        .init(name: "7sus4", category: .suspendedExtended, isOn: false),
+        .init(name: "9sus4", category: .suspendedExtended, isOn: false),
+        .init(name: "13sus4", category: .suspendedExtended, isOn: false),
+        .init(name: "7sus4(b9)", category: .suspendedExtended, isOn: false),
+        .init(name: "13sus4(b9)", category: .suspendedExtended, isOn: false),
     ]
     @State private var showAnswer = false
     
@@ -133,17 +134,17 @@ struct SingleChordView: View {
                 Button("Play Chords") {
                     playChords(chords: chords)
                 }
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .padding()
-                .background(.gray)
+                .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 
                 Button("Next") {
                     next()
                 }
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .padding()
-                .background(.gray)
+                .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .padding()
                 
@@ -159,6 +160,7 @@ struct SingleChordView: View {
             // settings sheet handled below
         }
         .onAppear {
+            loadChordSettings()
             next()
             counter = 0
         }
@@ -224,6 +226,7 @@ struct SingleChordView: View {
                         if chosenChords.isEmpty {
                             showNoChordsAlert = true
                         } else {
+                            saveChordSettings()
                             settings = false
                             next()
                         }
@@ -240,6 +243,23 @@ struct SingleChordView: View {
     func toggleAll(_ on: Bool) {
         for i in chordOptions.indices {
             chordOptions[i].isOn = on
+        }
+    }
+
+    private func saveChordSettings() {
+        let selectedNames = chordOptions
+            .filter { $0.isOn }
+            .map { $0.name }
+
+        UserDefaults.standard.set(selectedNames, forKey: chordOptionsStorageKey)
+    }
+
+    private func loadChordSettings() {
+        guard let savedNames = UserDefaults.standard.array(forKey: chordOptionsStorageKey) as? [String] else { return }
+        let savedNameSet = Set(savedNames)
+
+        for index in chordOptions.indices {
+            chordOptions[index].isOn = savedNameSet.contains(chordOptions[index].name)
         }
     }
     

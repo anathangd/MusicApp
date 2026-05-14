@@ -13,13 +13,18 @@ struct PianoPieceView: View {
     @Environment(\.modelContext) private var modelContext
     @Bindable var piece: PianoPiece
     @State private var showingCustomSectionSheet = false
+    @State private var showingSectionTotalsSheet = false
     @State private var customSectionName = ""
     @State private var showingRenameSectionAlert = false
     @State private var renameSectionName = ""
     @State private var renameEntryID: UUID?
     @State private var renameSectionIndex: Int?
     @State private var entryPendingDeletion: TallyMethodEntry?
+    @State private var entryPendingDateEdit: TallyMethodEntry?
+    @State private var editedSessionDateTime = Date()
+    @State private var expandedTotalGroups: Set<String> = []
     @FocusState private var focusedEntryID: UUID?
+    @State private var keyboardHeight: CGFloat = 0
     private let calendar = Calendar.current
 
     private func playLightHaptic() {
@@ -78,6 +83,108 @@ struct PianoPieceView: View {
         }
 
         return options
+    }
+
+    private var sectionTotals: [(name: String, total: Int)] {
+        var totals: [String: Int] = [:]
+
+        for entry in piece.entries {
+            for index in entry.sections.indices {
+                let sectionName = entry.sections[index]
+                let reps = entry.reps.indices.contains(index) ? entry.reps[index] : 0
+                let countedSections = sectionsCountedBy(sectionName)
+
+                for countedSection in countedSections {
+                    totals[countedSection, default: 0] += reps
+                }
+            }
+        }
+
+        return totals
+            .map { (name: $0.key, total: $0.value) }
+            .sorted { lhs, rhs in
+                if lhs.name.count == 1,
+                   rhs.name.count == 1,
+                   lhs.name.first?.isLetter == true,
+                   rhs.name.first?.isLetter == true {
+                    return lhs.name.uppercased() < rhs.name.uppercased()
+                }
+                return lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
+            }
+    }
+
+    private func sectionsCountedBy(_ sectionName: String) -> [String] {
+        if let rangeSections = letterRangeSections(from: sectionName) {
+            return rangeSections
+        }
+
+        return [sectionName]
+    }
+
+    private func letterRangeSections(from sectionName: String) -> [String]? {
+        let cleaned = sectionName
+            .replacingOccurrences(of: " ", with: "")
+            .uppercased()
+
+        let parts = cleaned.split(separator: "-", maxSplits: 1).map(String.init)
+        guard parts.count == 2,
+              let first = parts.first,
+              let last = parts.last,
+              first.count == 1,
+              last.count == 1,
+              let startScalar = first.unicodeScalars.first,
+              let endScalar = last.unicodeScalars.first,
+              CharacterSet.uppercaseLetters.contains(startScalar),
+              CharacterSet.uppercaseLetters.contains(endScalar),
+              startScalar.value <= endScalar.value
+        else {
+            return nil
+        }
+
+        return (startScalar.value...endScalar.value).compactMap { value in
+            UnicodeScalar(value).map { String($0) }
+        }
+    }
+
+    private func isHandVariant(_ sectionName: String) -> Bool {
+        let parts = sectionName.uppercased().split(separator: " ")
+        return parts.contains("LH") || parts.contains("RH")
+    }
+
+    private func baseSectionName(for sectionName: String) -> String {
+        let words = sectionName.split(separator: " ")
+        let filtered = words.filter { word in
+            let uppercased = word.uppercased()
+            return uppercased != "LH" && uppercased != "RH"
+        }
+        return filtered.joined(separator: " ")
+    }
+
+    private func totalVariants(for sectionName: String) -> [(name: String, total: Int)] {
+        sectionTotals.filter { section in
+            isHandVariant(section.name) &&
+            baseSectionName(for: section.name).caseInsensitiveCompare(sectionName) == .orderedSame
+        }
+    }
+
+    private func visibleSectionTotals() -> [(name: String, total: Int)] {
+        sectionTotals.filter { section in
+            guard isHandVariant(section.name) else { return true }
+            let baseName = baseSectionName(for: section.name)
+            let hasBaseTotal = sectionTotals.contains { $0.name.caseInsensitiveCompare(baseName) == .orderedSame }
+            guard hasBaseTotal else { return true }
+            return expandedTotalGroups.contains(baseName.uppercased())
+        }
+    }
+
+    private func toggleTotalGroup(_ sectionName: String) {
+        playLightHaptic()
+        let key = sectionName.uppercased()
+        if expandedTotalGroups.contains(key) {
+            expandedTotalGroups.remove(key)
+        } else {
+            expandedTotalGroups.insert(key)
+        }
     }
 
     var body: some View {
@@ -190,7 +297,11 @@ struct PianoPieceView: View {
                         Text(dayHeader(for: entry))
                         Spacer()
                         Menu {
-                            Button("Delete Session", role: .destructive) {
+                            Button("Edit Date", systemImage: "calendar") {
+                                beginEditDate(for: entry)
+                            }
+
+                            Button("Delete Session", systemImage: "trash", role: .destructive) {
                                 entryPendingDeletion = entry
                             }
                         } label: {
@@ -200,9 +311,19 @@ struct PianoPieceView: View {
                 }
             }
         }
+        .safeAreaInset(edge: .bottom) {
+            Color.clear
+                .frame(height: focusedEntryID == nil ? 0 : keyboardBottomPadding)
+        }
         .navigationTitle(piece.name)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                Button {
+                    showingSectionTotalsSheet = true
+                } label: {
+                    Label("Totals", systemImage: "chart.bar.xaxis")
+                }
+
                 Button {
                     addDay()
                 } label: {
@@ -216,6 +337,12 @@ struct PianoPieceView: View {
                     focusedEntryID = nil
                 }
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillChangeFrameNotification)) { notification in
+            updateKeyboardHeight(from: notification)
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            keyboardHeight = 0
         }
         .sheet(isPresented: $showingCustomSectionSheet) {
             NavigationStack {
@@ -238,6 +365,98 @@ struct PianoPieceView: View {
                     }
                 }
             }
+        }
+        .sheet(isPresented: $showingSectionTotalsSheet) {
+            NavigationStack {
+                List {
+                    Section("Total Reps") {
+                        ForEach(visibleSectionTotals(), id: \.name) { section in
+                            let variants = totalVariants(for: section.name)
+                            HStack {
+
+                                Text(section.name)
+                                if !isHandVariant(section.name) && !variants.isEmpty {
+                                    Image(systemName: expandedTotalGroups.contains(section.name.uppercased()) ? "chevron.down" : "chevron.right")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                Spacer()
+
+                                Text("\(section.total)")
+                                    .monospacedDigit()
+                                    .foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                if !isHandVariant(section.name) && !variants.isEmpty {
+                                    toggleTotalGroup(section.name)
+                                }
+                            }
+                        }
+                    }
+
+                    Section {
+                        HStack {
+                            Text("Overall Total")
+                                .fontWeight(.semibold)
+                            Spacer()
+                            Text("\(sectionTotals.reduce(0) { $0 + $1.total })")
+                                .monospacedDigit()
+                                .fontWeight(.semibold)
+                        }
+                    }
+                }
+                .navigationTitle("Section Totals")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") {
+                            showingSectionTotalsSheet = false
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
+        .sheet(
+            isPresented: Binding(
+                get: { entryPendingDateEdit != nil },
+                set: { if !$0 { entryPendingDateEdit = nil } }
+            )
+        ) {
+            NavigationStack {
+                Form {
+                    DatePicker(
+                        "Session Date",
+                        selection: $editedSessionDateTime,
+                        displayedComponents: [.date]
+                    )
+                    .datePickerStyle(.graphical)
+
+                    DatePicker(
+                        "Session Time",
+                        selection: $editedSessionDateTime,
+                        displayedComponents: [.hourAndMinute]
+                    )
+                }
+                .navigationTitle("Edit Session Time")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            entryPendingDateEdit = nil
+                        }
+                    }
+
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Save") {
+                            applySessionDateEdit()
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
         .alert("Rename Section", isPresented: $showingRenameSectionAlert) {
             TextField("Section name", text: $renameSectionName)
@@ -426,17 +645,68 @@ struct PianoPieceView: View {
         save()
     }
 
+    private func beginEditDate(for entry: TallyMethodEntry) {
+        playMediumHaptic()
+        entryPendingDateEdit = entry
+        editedSessionDateTime = entry.dateCreated
+    }
+
+    private func applySessionDateEdit() {
+        guard let entry = entryPendingDateEdit else { return }
+
+        entry.dateCreated = editedSessionDateTime
+
+        renumberDaysAndSessions()
+        entryPendingDateEdit = nil
+        playSuccessHaptic()
+        save()
+    }
+
+    private func renumberDaysAndSessions() {
+        let entriesByDate = piece.entries.sorted { lhs, rhs in
+            lhs.dateCreated < rhs.dateCreated
+        }
+
+        var currentDayNumber = 0
+        var currentSessionNumber = 0
+        var previousDate: Date?
+
+        for entry in entriesByDate {
+            if let previousDate, calendar.isDate(entry.dateCreated, inSameDayAs: previousDate) {
+                currentSessionNumber += 1
+            } else {
+                currentDayNumber += 1
+                currentSessionNumber = 1
+                previousDate = entry.dateCreated
+            }
+
+            entry.day = currentDayNumber
+            entry.session = currentSessionNumber
+        }
+    }
+    private var keyboardBottomPadding: CGFloat {
+        guard keyboardHeight > 0 else { return 0 }
+        return max(80, keyboardHeight * 0.65)
+    }
+
+    private func updateKeyboardHeight(from notification: Notification) {
+        guard let frame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        let screenHeight = UIScreen.main.bounds.height
+        keyboardHeight = max(0, screenHeight - frame.minY)
+    }
+
     private func save() {
         try? modelContext.save()
     }
 
     private func dayHeader(for entry: TallyMethodEntry) -> String {
         let dateText = entry.dateCreated.formatted(date: .abbreviated, time: .omitted)
+        let timeText = entry.dateCreated.formatted(date: .omitted, time: .shortened)
         let hasMultipleSessions = piece.entries.filter { $0.day == entry.day }.count > 1
         if hasMultipleSessions {
-            return "Day \(entry.day) - \(dateText) - Session \(entry.session)"
+            return "Day \(entry.day) - \(dateText) - \(timeText) - Session \(entry.session)"
         }
-        return "Day \(entry.day) - \(dateText)"
+        return "Day \(entry.day) - \(dateText) - \(timeText)"
     }
 
 }
@@ -529,8 +799,8 @@ private struct WrappingHStack: Layout {
     day2.reps = [1]
     container.mainContext.insert(day2)
     let day2Session2 = TallyMethodEntry(day: 2, session: 2, dateCreated: Date(), piece: piece)
-    day2Session2.sections = ["B"]
-    day2Session2.reps = [3]
+    day2Session2.sections = ["B", "A-C", "B-C", "D-H"]
+    day2Session2.reps = [3, 5, 1, 5]
     container.mainContext.insert(day2Session2)
     return NavigationStack {
         PianoPieceView(piece: piece)

@@ -9,6 +9,7 @@ import SwiftUI
 import AVFoundation
 
 struct SequenceView: View {
+    let noteRange: ClosedRange<UInt8>?
     
     @State var notes: [UInt8] = [71,69,62,72,71,69,67]
     @State var incorrect: [[UInt8]] = [[70,71,72], [70,71,72], [70,71,72]]
@@ -39,6 +40,10 @@ struct SequenceView: View {
         .init(note: 64, startBeat: 1.5, durationBeats: 0.5),  // E eighth
         .init(note: 67, startBeat: 2.0, durationBeats: 2.0)   // G half
     ]
+
+    init(noteRange: ClosedRange<UInt8>? = nil) {
+        self.noteRange = noteRange
+    }
     
     var body: some View {
         ZStack {
@@ -62,8 +67,8 @@ struct SequenceView: View {
                                 Image(systemName: "figure.strengthtraining.traditional")
                                     .font(.system(size: 20))
                                     .padding(5)
-                                    .background(.gray, in: Circle())
-                                    .foregroundStyle(practice ? Color.blue : Color.black)
+                                    .background(Color(.secondarySystemBackground), in: Circle())
+                                    .foregroundStyle(practice ? Color.blue : Color.primary)
                             }
                             if !practice {
                                 Text(String(incorrect.count))
@@ -92,9 +97,9 @@ struct SequenceView: View {
                 Button("Play Sequence") {
                     playSequence()
                 }
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .padding()
-                .background(.gray)
+                .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 
                 HStack {
@@ -103,9 +108,9 @@ struct SequenceView: View {
                     }
                     .buttonStyle(.bordered)
                     .font(.caption)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.primary)
                     
-                    .background(.gray)
+                    .background(Color(.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     
                     Button("Second") {
@@ -113,8 +118,8 @@ struct SequenceView: View {
                     }
                     .buttonStyle(.bordered)
                     .font(.caption)
-                    .foregroundStyle(.black)
-                    .background(.gray)
+                    .foregroundStyle(.primary)
+                    .background(Color(.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     
                     if fourNote {
@@ -123,8 +128,8 @@ struct SequenceView: View {
                         }
                         .buttonStyle(.bordered)
                         .font(.caption)
-                        .foregroundStyle(.black)
-                        .background(.gray)
+                        .foregroundStyle(.primary)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
                 }
@@ -248,7 +253,7 @@ struct SequenceView: View {
         fourNote = false
         notes.removeAll()
         atonalAnswerString = ""
-        rootNote = UInt8(Int.random(in: 57...72))
+        rootNote = randomRootNote()
         notes.append(rootNote)
         if atonalFirstPress == true {
             atonalFirstPress = false
@@ -863,6 +868,14 @@ struct SequenceView: View {
         guard notes.count >= 3 else { return }
         let slice = Array(notes[2..<notes.count])
         PianoSequencePlayer.shared.play(notes: slice, tempoBPM: tempo)
+    }
+
+    private func randomRootNote() -> UInt8 {
+        if let noteRange {
+            return UInt8(Int.random(in: Int(noteRange.lowerBound)...Int(noteRange.upperBound)))
+        }
+
+        return UInt8(Int.random(in: 57...72))
     }
 }
 

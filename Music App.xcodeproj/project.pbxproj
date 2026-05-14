@@ -13,13 +13,13 @@
 		44290C3A2FA2DB280099EC3D /* TallyMethodEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44290C392FA2DB280099EC3D /* TallyMethodEntry.swift */; };
 		44290C3C2FA2E8EF0099EC3D /* PianoPieceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44290C3B2FA2E8EF0099EC3D /* PianoPieceView.swift */; };
 		443E45DD2DB7771800EDD2DA /* SingleChordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443E45DC2DB7771800EDD2DA /* SingleChordView.swift */; };
-		445149A22B5EF31400E28230 /* WhistleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445149A12B5EF31400E28230 /* WhistleView.swift */; };
-		445149A42B5EF53B00E28230 /* OcarinaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445149A32B5EF53B00E28230 /* OcarinaView.swift */; };
-		4467C7842B5EA761001E679F /* VocalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4467C7832B5EA761001E679F /* VocalView.swift */; };
 		446B60222E57175E0080B9D8 /* CapsuleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B60212E57175E0080B9D8 /* CapsuleButton.swift */; };
 		446B60242E5718EF0080B9D8 /* IndividualIntervalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B60232E5718EF0080B9D8 /* IndividualIntervalView.swift */; };
+		447402F62FB18DA000AD11C6 /* MelodyListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 447402F52FB18DA000AD11C6 /* MelodyListView.swift */; };
 		44A99F052B489EA400E876F8 /* SequenceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A99F042B489EA400E876F8 /* SequenceView.swift */; };
 		44A99F092B49BC7900E876F8 /* DiatonicChordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44A99F082B49BC7900E876F8 /* DiatonicChordView.swift */; };
+		44B0F8892FB055C900D03182 /* AddInstrumentSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B0F8882FB055C900D03182 /* AddInstrumentSheet.swift */; };
+		44B0F88B2FB0730800D03182 /* MelodyEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B0F88A2FB0730800D03182 /* MelodyEntryView.swift */; };
 		44C1A85A2F09A5630051CC03 /* PianoSequencePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C1A8592F09A5630051CC03 /* PianoSequencePlayer.swift */; };
 		44C1A85C2F09A9E70051CC03 /* MelodyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C1A85B2F09A9E70051CC03 /* MelodyView.swift */; };
 		44E8B5182AF1270200830851 /* Music_AppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E8B5172AF1270200830851 /* Music_AppApp.swift */; };
@@ -35,13 +35,13 @@
 		44290C392FA2DB280099EC3D /* TallyMethodEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TallyMethodEntry.swift; sourceTree = "<group>"; };
 		44290C3B2FA2E8EF0099EC3D /* PianoPieceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoPieceView.swift; sourceTree = "<group>"; };
 		443E45DC2DB7771800EDD2DA /* SingleChordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleChordView.swift; sourceTree = "<group>"; };
-		445149A12B5EF31400E28230 /* WhistleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhistleView.swift; sourceTree = "<group>"; };
-		445149A32B5EF53B00E28230 /* OcarinaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OcarinaView.swift; sourceTree = "<group>"; };
-		4467C7832B5EA761001E679F /* VocalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VocalView.swift; sourceTree = "<group>"; };
 		446B60212E57175E0080B9D8 /* CapsuleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleButton.swift; sourceTree = "<group>"; };
 		446B60232E5718EF0080B9D8 /* IndividualIntervalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualIntervalView.swift; sourceTree = "<group>"; };
+		447402F52FB18DA000AD11C6 /* MelodyListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MelodyListView.swift; sourceTree = "<group>"; };
 		44A99F042B489EA400E876F8 /* SequenceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceView.swift; sourceTree = "<group>"; };
 		44A99F082B49BC7900E876F8 /* DiatonicChordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiatonicChordView.swift; sourceTree = "<group>"; };
+		44B0F8882FB055C900D03182 /* AddInstrumentSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddInstrumentSheet.swift; sourceTree = "<group>"; };
+		44B0F88A2FB0730800D03182 /* MelodyEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MelodyEntryView.swift; sourceTree = "<group>"; };
 		44C1A8592F09A5630051CC03 /* PianoSequencePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoSequencePlayer.swift; sourceTree = "<group>"; };
 		44C1A85B2F09A9E70051CC03 /* MelodyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MelodyView.swift; sourceTree = "<group>"; };
 		44E8B5142AF1270200830851 /* Music App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Music App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -83,6 +83,8 @@
 			children = (
 				44E8B5172AF1270200830851 /* Music_AppApp.swift */,
 				44E8B5192AF1270200830851 /* ContentView.swift */,
+				44B0F88A2FB0730800D03182 /* MelodyEntryView.swift */,
+				44B0F8882FB055C900D03182 /* AddInstrumentSheet.swift */,
 				44290C352FA2D9B10099EC3D /* TallyMethodView.swift */,
 				44290C3B2FA2E8EF0099EC3D /* PianoPieceView.swift */,
 				44290C372FA2D9F90099EC3D /* PianoPiece.swift */,
@@ -90,13 +92,11 @@
 				446B60232E5718EF0080B9D8 /* IndividualIntervalView.swift */,
 				44C1A8592F09A5630051CC03 /* PianoSequencePlayer.swift */,
 				44C1A85B2F09A9E70051CC03 /* MelodyView.swift */,
+				447402F52FB18DA000AD11C6 /* MelodyListView.swift */,
 				446B60212E57175E0080B9D8 /* CapsuleButton.swift */,
 				443E45DC2DB7771800EDD2DA /* SingleChordView.swift */,
 				44A99F042B489EA400E876F8 /* SequenceView.swift */,
 				44A99F082B49BC7900E876F8 /* DiatonicChordView.swift */,
-				4467C7832B5EA761001E679F /* VocalView.swift */,
-				445149A12B5EF31400E28230 /* WhistleView.swift */,
-				445149A32B5EF53B00E28230 /* OcarinaView.swift */,
 				44E8B51B2AF1270400830851 /* Assets.xcassets */,
 				44E8B51D2AF1270400830851 /* Preview Content */,
 				44213D0B2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 */,
@@ -190,19 +190,19 @@
 				44A99F052B489EA400E876F8 /* SequenceView.swift in Sources */,
 				446B60222E57175E0080B9D8 /* CapsuleButton.swift in Sources */,
 				44290C382FA2D9F90099EC3D /* PianoPiece.swift in Sources */,
+				44B0F8892FB055C900D03182 /* AddInstrumentSheet.swift in Sources */,
 				44290C3A2FA2DB280099EC3D /* TallyMethodEntry.swift in Sources */,
-				445149A22B5EF31400E28230 /* WhistleView.swift in Sources */,
 				44E8B51A2AF1270200830851 /* ContentView.swift in Sources */,
+				447402F62FB18DA000AD11C6 /* MelodyListView.swift in Sources */,
 				44C1A85A2F09A5630051CC03 /* PianoSequencePlayer.swift in Sources */,
 				44290C3C2FA2E8EF0099EC3D /* PianoPieceView.swift in Sources */,
 				44E8B5182AF1270200830851 /* Music_AppApp.swift in Sources */,
 				44290C362FA2D9B10099EC3D /* TallyMethodView.swift in Sources */,
 				44A99F092B49BC7900E876F8 /* DiatonicChordView.swift in Sources */,
 				443E45DD2DB7771800EDD2DA /* SingleChordView.swift in Sources */,
+				44B0F88B2FB0730800D03182 /* MelodyEntryView.swift in Sources */,
 				44C1A85C2F09A9E70051CC03 /* MelodyView.swift in Sources */,
-				4467C7842B5EA761001E679F /* VocalView.swift in Sources */,
 				446B60242E5718EF0080B9D8 /* IndividualIntervalView.swift in Sources */,
-				445149A42B5EF53B00E28230 /* OcarinaView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,7 +339,7 @@
 				DEVELOPMENT_TEAM = JAA69CCMYZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Ear Trainer";
+				INFOPLIST_KEY_CFBundleDisplayName = "Music Trainer";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -374,7 +374,7 @@
 				DEVELOPMENT_TEAM = JAA69CCMYZ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Ear Trainer";
+				INFOPLIST_KEY_CFBundleDisplayName = "Music Trainer";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

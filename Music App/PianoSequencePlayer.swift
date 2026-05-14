@@ -362,185 +362,6 @@ struct MelodyCollection {
             ]
         ),
         
-        // My Lonely Road
-        MusicalPhrase(
-            tempoBPM: 110, steps: [
-                .init(degree: 3),
-                .init(degree: 2),
-                .init(degree: 1, durationBeats: 1),
-                .init(degree: 3, octave: -1, durationBeats: 1),
-                .init(degree: 5, octave: -1, durationBeats: 1),
-                .init(degree: 7, octave: -1, durationBeats: 2),
-                .init(degree: 6, octave: -1, durationBeats: 1)
-            ]
-        ),
-        MusicalPhrase(
-            tempoBPM: 110, steps: [
-                .init(degree: 5),
-                .init(degree: 4, accidental: .sharp),
-                .init(degree: 5),
-                .init(degree: 6, durationBeats: 1),
-                .init(degree: 4, accidental: .sharp),
-                .init(degree: 2, durationBeats: 1),
-            ]
-        ),
-        MusicalPhrase(
-            mode: .minor, tempoBPM: 110, steps: [
-                .init(degree: 3),
-                .init(degree: 5, octave: -1),
-                .init(degree: 2, durationBeats: 0.25),
-                .init(degree: 3, durationBeats: 0.25),
-                .init(degree: 2),
-                .init(degree: 1, durationBeats: 3),
-            ]
-        ),
-        
-        // SAO
-        MusicalPhrase(steps: [
-            .init(degree: 3, durationBeats: 1),
-            .init(degree: 4, durationBeats: 1),
-            .init(degree: 5, durationBeats: 1),
-            .init(degree: 5, durationBeats: 1.5),
-            .init(degree: 4),
-            .init(degree: 3),
-            .init(degree: 2),
-            .init(degree: 2, durationBeats: 2),
-            .init(degree: 7, durationBeats: 1),
-            .init(degree: 5, durationBeats: 0.75),
-            .init(degree: 6, durationBeats: 0.25),
-            .init(degree: 5, durationBeats: 2),
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 3, durationBeats: 1),
-            .init(degree: 4),
-            .init(degree: 3),
-            .init(degree: 2),
-            .init(degree: 3, durationBeats: 1),
-            .init(degree: 1),
-            .init(degree: 7, octave: -1, durationBeats: 1),
-            .init(degree: 1, durationBeats: 1.5),
-            .init(degree: 7),
-            .init(degree: 5, durationBeats: 1),
-            .init(degree: 1, durationBeats: 2)
-        ]),
-        
-        // Eyes On Me
-        MusicalPhrase(steps: [
-            .init(degree: 6, octave: -1),
-            .init(degree: 1),
-            .init(degree: 1, durationBeats: 1.5),
-            .init(degree: 2),
-            .init(degree: 3),
-            .init(degree: 5),
-            .init(degree: 2, durationBeats: 4),
-        ]),
-        
-        // Ami
-        MusicalPhrase(steps: [
-            .init(degree: 3),
-            .init(degree: 4),
-            .init(degree: 5, durationBeats: 1.5),
-            .init(degree: 7),
-            .init(degree: 6, durationBeats: 1),
-            .init(degree: 4, durationBeats: 1),
-            .init(degree: 4, durationBeats: 3),
-            .init(degree: 2),
-            .init(degree: 3),
-            .init(degree: 4, durationBeats: 1.5),
-            .init(degree: 6),
-            .init(degree: 4, accidental: .sharp, durationBeats: 1),
-            .init(degree: 5, durationBeats: 1),
-            .init(degree: 5, durationBeats: 2)
-        ]),
-        
-        // Perfect Crime
-        MusicalPhrase(steps: [
-            .init(degree: 2),
-            .init(degree: 2),
-            .init(degree: 3),
-            .init(degree: 2),
-            .init(degree: 1),
-            .init(degree: 6, octave: -1),
-            .init(degree: 5, octave: -1),
-        ]),
-        
-        // ADONIS
-        MusicalPhrase(
-            tempoBPM: 140, steps: [
-            .init(degree: 3, octave: 1, durationBeats: 1),
-            .init(degree: 2, octave: 1, durationBeats: 1),
-            .init(degree: 1, octave: 1),
-            .init(degree: 2, octave: 1),
-            .init(degree: 1, octave: 1),
-            .init(degree: 7, durationBeats: 1),
-            .init(degree: 5, durationBeats: 1.5),
-            .init(degree: 3),
-            .init(degree: 5),
-            .init(degree: 3),
-            .init(degree: 2, durationBeats: 1),
-            .init(degree: 1, durationBeats: 1)
-        ]),
-        MusicalPhrase(tempoBPM: 110, steps: [
-            .init(degree: 1),
-            .init(degree: 2),
-            .init(degree: 3, durationBeats: 0.75),
-            .init(degree: 6, octave: -1, durationBeats: 0.75),
-            .init(degree: 6, octave: -1),
-            .init(degree: 5, octave: -1, durationBeats: 1)
-        ]),
-        
-        // Kano, midnight powerless god?
-        MusicalPhrase(steps: [
-            .init(degree: 1, octave: 1),
-            .init(degree: 2, octave: 1, durationBeats: 1),
-            .init(degree: 1, octave: 1, durationBeats: 1),
-            .init(degree: 7),
-            .init(degree: 5),
-            .init(degree: 3),
-            .init(degree: 5, durationBeats: 2),
-            .init(degree: 6, durationBeats: 2),
-            .init(degree: 5, durationBeats: 2)
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 5, octave: -1),
-            .init(degree: 3),
-            .init(degree: 2, durationBeats: 1),
-            .init(degree: 5),
-            .init(degree: 3),
-            .init(degree: 2, durationBeats: 2)
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 7, octave: -1),
-            .init(degree: 1, durationBeats: 1),
-            .init(degree: 2, durationBeats: 1),
-            .init(degree: 3, durationBeats: 1),
-            .init(degree: 5, octave: -1, durationBeats: 2)
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 2),
-            .init(degree: 3, durationBeats: 1),
-            .init(degree: 5, durationBeats: 1),
-            .init(degree: 6, durationBeats: 1),
-            .init(degree: 6, durationBeats: 1),
-            .init(degree: 7, durationBeats: 1),
-            .init(degree: 5),
-            .init(degree: 5, durationBeats: 2)
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 5, octave: -1, durationBeats: 1),
-            .init(degree: 6, octave: -1, durationBeats: 0.25),
-            .init(degree: 7, octave: -1),
-            .init(degree: 1, durationBeats: 0.75),
-            .init(degree: 2),
-            .init(degree: 3),
-            .init(degree: 1),
-            .init(degree: 5, durationBeats: 2),
-            .init(degree: 6, durationBeats: 0.25),
-            .init(degree: 5),
-            .init(degree: 3),
-            .init(degree: 5, durationBeats: 0.75)
-        ]),
-        
         // Arabesque
         MusicalPhrase(tempoBPM: 80, steps: [
             .init(degree: 6, octave: -1, durationBeats: 1.0/3.0),
@@ -586,301 +407,62 @@ struct MelodyCollection {
             .init(degree: 7, octave: -1, durationBeats: 2),
             .init(degree: 6, octave: -1, durationBeats: 1)
         ]),
-        
-        // SAO a tender feeling
-        MusicalPhrase(tempoBPM: 80, steps: [
-            .init(degree: 5, octave: -1),
+
+        // Greensleeves 5
+        MusicalPhrase(mode: .minor, tempoBPM: 92, steps: [
             .init(degree: 1),
-            .init(degree: 2),
-            .init(degree: 3, durationBeats: 1.5),
-            .init(degree: 5),
-            .init(degree: 2, durationBeats: 1.5),
-            .init(degree: 5),
-            .init(degree: 1, durationBeats: 2)
-        ]),
-        MusicalPhrase(tempoBPM: 80, steps: [
-            .init(degree: 1),
+            .init(degree: 3),
             .init(degree: 4),
             .init(degree: 5),
             .init(degree: 6, durationBeats: 1.5),
-            .init(degree: 1, octave: 1),
-            .init(degree: 5, durationBeats: 1.5),
-            .init(degree: 3),
-            .init(degree: 4, durationBeats: 2)
-        ]),
-        MusicalPhrase(tempoBPM: 80, steps: [
-            .init(degree: 4),
-            .init(degree: 3),
-            .init(degree: 2),
-            .init(degree: 1),
-            .init(degree: 6, octave: -1, durationBeats: 1)
-        ]),
-        
-        // More Kano
-        MusicalPhrase(steps: [
-            .init(degree: 4),
             .init(degree: 5),
-            .init(degree: 6, durationBeats: 1),
-            .init(degree: 1, durationBeats: 0.75),
-            .init(degree: 7, octave: -1, durationBeats: 1.25),
-            .init(degree: 6),
+            .init(degree: 4),
+            .init(degree: 2, durationBeats: 2)
+        ]),
+
+        // Scarborough Fair 6
+        MusicalPhrase(mode: .minor, tempoBPM: 88, steps: [
+            .init(degree: 5),
+            .init(degree: 1, octave: 1),
+            .init(degree: 1, octave: 1),
             .init(degree: 7),
+            .init(degree: 6),
             .init(degree: 5, durationBeats: 2)
         ]),
-        MusicalPhrase(steps: [
-            .init(degree: 3, durationBeats: 0.25),
-            .init(degree: 4, durationBeats: 0.25),
-            .init(degree: 5, durationBeats: 1),
-            .init(degree: 3, durationBeats: 1),
-            .init(degree: 1, durationBeats: 1),
-            .init(degree: 6, accidental: .flat, octave: -1, durationBeats: 1),
-            .init(degree: 5, octave: -1, durationBeats: 1)
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 6),
-            .init(degree: 5, durationBeats: 1),
-            .init(degree: 1, octave: 1, durationBeats: 1),
-            .init(degree: 6, durationBeats: 1.5),
-            .init(degree: 5, durationBeats: 2.5),
-            .init(degree: 3),
+
+        // Frère Jacques 7
+        MusicalPhrase(tempoBPM: 108, steps: [
+            .init(degree: 1),
             .init(degree: 2),
-            .init(degree: 1, durationBeats: 2)
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 1),
-            .init(degree: 6, octave: -1),
-            .init(degree: 1, durationBeats: 0.25),
             .init(degree: 3),
-            .init(degree: 2, durationBeats: 1.25),
-            .init(degree: 2, durationBeats: 0.25),
-            .init(degree: 3, durationBeats: 0.25),
-            .init(degree: 4),
-            .init(degree: 5, durationBeats: 1),
-            .init(degree: 3, durationBeats: 0.25),
-            .init(degree: 5),
-            .init(degree: 7, durationBeats: 1.25),
-            .init(degree: 1, accidental: .sharp, octave: 1, durationBeats: 1)
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 5),
             .init(degree: 1),
-            .init(degree: 6, octave: -1, durationBeats: 0.25),
             .init(degree: 1),
-            .init(degree: 2, durationBeats: 2.25),
-            .init(degree: 5, durationBeats: 0.5),
-            .init(degree: 4, durationBeats: 0.25),
-            .init(degree: 3, durationBeats: 0.25),
-            .init(degree: 4, durationBeats: 0.25),
-            .init(degree: 3, durationBeats: 0.25),
-            .init(degree: 1, durationBeats: 0.25),
-            .init(degree: 6, octave: -1, durationBeats: 0.25),
+            .init(degree: 2),
+            .init(degree: 3),
             .init(degree: 1)
         ]),
-        
-        // Hikare
-        MusicalPhrase(steps: [
-            .init(degree: 5, durationBeats: 1),
+
+        // Ode to Joy 8
+        MusicalPhrase(tempoBPM: 110, steps: [
             .init(degree: 3),
-            .init(degree: 5),
-            .init(degree: 6, durationBeats: 1),
-            .init(degree: 3),
-            .init(degree: 2, durationBeats: 1),
-            .init(degree: 1),
-            .init(degree: 2),
-            .init(degree: 3),
-            .init(degree: 2),
-            .init(degree: 1),
-            .init(degree: 1, durationBeats: 1),
-            .init(degree: 5, durationBeats: 1),
-            .init(degree: 3),
-            .init(degree: 5),
-            .init(degree: 6, durationBeats: 1),
-            .init(degree: 1, octave: 1),
-            .init(degree: 2, octave: 1, durationBeats: 1),
-            .init(degree: 1, octave: 1),
-            .init(degree: 2, octave: 1),
-            .init(degree: 3, octave: 1),
-            .init(degree: 2, octave: 1),
-            .init(degree: 1, octave: 1),
-            .init(degree: 6, durationBeats: 1)
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 5),
-            .init(degree: 3),
-            .init(degree: 5),
-            .init(degree: 6, durationBeats: 1),
-            .init(degree: 1, octave: 1),
-            .init(degree: 7, durationBeats: 1),
-            .init(degree: 5),
-            .init(degree: 3, durationBeats: 1),
-            .init(degree: 2, durationBeats: 1),
-            .init(degree: 3, durationBeats: 1),
-            .init(degree: 2),
-            .init(degree: 3),
-            .init(degree: 2),
-            .init(degree: 3),
-            .init(degree: 5, accidental: .sharp, durationBeats: 1)
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 2),
-            .init(degree: 1),
-            .init(degree: 3),
-            .init(degree: 1),
-            .init(degree: 6, octave: -1),
-            .init(degree: 5, octave: -1, durationBeats: 0.25),
-            .init(degree: 4, accidental: .sharp, octave: -1, durationBeats: 0.75)
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 2),
-            .init(degree: 1, durationBeats: 1),
-            .init(degree: 6, octave: -1, durationBeats: 1),
-            .init(degree: 1, durationBeats: 1),
-            .init(degree: 6, durationBeats: 1),
-            .init(degree: 5),
-            .init(degree: 3),
-            .init(degree: 2),
-            .init(degree: 1, durationBeats: 1)
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 2),
-            .init(degree: 2, accidental: .flat),
-            .init(degree: 1, durationBeats: 1.5),
-            .init(degree: 7, durationBeats: 0.25),
-            .init(degree: 7, durationBeats: 0.75),
-            .init(degree: 6),
-            .init(degree: 5),
-            .init(degree: 6),
-            .init(degree: 4, accidental: .sharp),
-            .init(degree: 2, durationBeats: 0.25),
-            .init(degree: 2),
-            .init(degree: 3, durationBeats: 0.25),
-            .init(degree: 2, durationBeats: 1)
-        ]),
-        
-        MusicalPhrase(steps: [
-            .init(degree: 1, durationBeats: 1),
-            .init(degree: 7, octave: -1, durationBeats: 3),
-            .init(degree: 5, durationBeats: 0.5),
-            .init(degree: 5, durationBeats: 2),
-            .init(degree: 5, durationBeats: 1),
-            .init(degree: 4, durationBeats: 0.5),
-            .init(degree: 3, durationBeats: 0.5),
-            .init(degree: 5, durationBeats: 0.5),
-            .init(degree: 5, durationBeats: 1),
-            .init(degree: 6, durationBeats: 0.5),
-            .init(degree: 1, durationBeats: 1)
-        ]),
-        
-        // Okaeri
-        MusicalPhrase(tempoBPM: 80, steps: [
-            .init(degree: 1, octave: 1, durationBeats: 0.25),
-            .init(degree: 7, accidental: .flat, durationBeats: 0.25),
-            .init(degree: 5, durationBeats: 0.25),
-            .init(degree: 7, accidental: .flat, durationBeats: 0.25),
-            .init(degree: 5, durationBeats: 0.25),
-            .init(degree: 4, durationBeats: 0.25),
-            .init(degree: 5, durationBeats: 0.75),
-            .init(degree: 4),
-            .init(degree: 1),
-            .init(degree: 4),
-            .init(degree: 4, durationBeats: 0.25),
-            .init(degree: 3),
-            .init(degree: 1, durationBeats: 1),
-        ]),
-        MusicalPhrase(tempoBPM: 80, steps: [
-            .init(degree: 1, durationBeats: 0.25),
-            .init(degree: 3, durationBeats: 0.25),
-            .init(degree: 5, durationBeats: 0.25),
-            .init(degree: 1, octave: 1),
-            .init(degree: 5),
-            .init(degree: 7, accidental: .flat, durationBeats: 0.75),
-            .init(degree: 6, accidental: .flat),
-            .init(degree: 6, accidental: .flat),
-            .init(degree: 7, accidental: .flat),
-            .init(degree: 6, accidental: .flat, durationBeats: 0.25),
-            .init(degree: 5),
-            .init(degree: 5, durationBeats: 4),
-            .init(degree: 1, durationBeats: 0.25),
-            .init(degree: 3, durationBeats: 0.25),
-            .init(degree: 5, durationBeats: 0.25),
-            .init(degree: 1, octave: 1),
-            .init(degree: 5),
-            .init(degree: 1, octave: 1, durationBeats: 0.75),
-            .init(degree: 6, accidental: .flat),
-            .init(degree: 2, octave: 1),
-            .init(degree: 4, octave: 1),
-            .init(degree: 4, octave: 1, durationBeats: 0.25),
-            .init(degree: 3, octave: 1),
-            .init(degree: 1, octave: 1, durationBeats: 4),
-        ]),
-        MusicalPhrase(steps: [
-            .init(degree: 1),
-            .init(degree: 3, durationBeats: 1),
-            .init(degree: 1),
-            .init(degree: 6, octave: -1),
-            .init(degree: 7, octave: -1),
-            .init(degree: 1),
-            .init(degree: 2, durationBeats: 1),
-            .init(degree: 1, durationBeats: 1)
-        ]),
-        
-        // 1000 something
-        MusicalPhrase(mode: .minor, steps: [
-            .init(degree: 5, octave: -1),
-            .init(degree: 2, durationBeats: 0.25),
-            .init(degree: 1, durationBeats: 0.25),
-            .init(degree: 2),
-            .init(degree: 3),
-            .init(degree: 2),
-            .init(degree: 7, accidental: .sharp, octave: -1, durationBeats: 1),
-            .init(degree: 7, accidental: .sharp, octave: -1),
-            .init(degree: 1),
-            .init(degree: 6, octave: -1, durationBeats: 1),
-            .init(degree: 6, octave: -1),
-            .init(degree: 7, accidental: .sharp, octave: -1),
-            .init(degree: 5, octave: -1, durationBeats: 1),
-            .init(degree: 4, octave: -1),
-            .init(degree: 5, octave: -1),
-            .init(degree: 2, durationBeats: 0.25),
-            .init(degree: 1, durationBeats: 0.25),
-            .init(degree: 2),
-            .init(degree: 3),
-            .init(degree: 2),
-            .init(degree: 7, accidental: .sharp, octave: -1, durationBeats: 1),
-            .init(degree: 7, accidental: .sharp, octave: -1),
-            .init(degree: 1, durationBeats: 0.75),
-            .init(degree: 2, durationBeats: 0.25),
             .init(degree: 3),
             .init(degree: 4),
-            .init(degree: 2, durationBeats: 4)
+            .init(degree: 5),
+            .init(degree: 5),
+            .init(degree: 4),
+            .init(degree: 3),
+            .init(degree: 2)
         ]),
-        
-        // The Flash
-        MusicalPhrase(steps: [
-            .init(degree: 6, octave: -1, durationBeats: 0.75),
-            .init(degree: 1, durationBeats: 0.75),
-            .init(degree: 7),
-            .init(degree: 6, durationBeats: 1.5),
-            .init(degree: 3),
-            .init(degree: 5, durationBeats: 0.75),
-            .init(degree: 4, durationBeats: 0.75),
-            .init(degree: 3),
-            .init(degree: 1, durationBeats: 1.5),
-            .init(degree: 3),
-            .init(degree: 5, durationBeats: 0.75),
-            .init(degree: 4, durationBeats: 0.75),
-            .init(degree: 3),
-            .init(degree: 1, durationBeats: 0.75),
-            .init(degree: 3, durationBeats: 0.75),
+
+        // Aura Lee 9
+        MusicalPhrase(tempoBPM: 82, steps: [
             .init(degree: 1),
-            .init(degree: 2, durationBeats: 1.5),
-            .init(degree: 3, durationBeats: 1),
-            .init(degree: 6, durationBeats: 0.25),
-            .init(degree: 5, durationBeats: 0.25),
-            .init(degree: 3, durationBeats: 0.25),
-            .init(degree: 2, durationBeats: 0.25),
-            .init(degree: 7, octave: -1),
-            .init(degree: 6, octave: -1),
-        ])
+            .init(degree: 3),
+            .init(degree: 5),
+            .init(degree: 6, durationBeats: 2),
+            .init(degree: 5),
+            .init(degree: 3),
+            .init(degree: 1, durationBeats: 2)
+        ]),
     ]
 }

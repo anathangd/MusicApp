@@ -13,6 +13,9 @@ struct TallyMethodView: View {
     @Query(sort: \PianoPiece.dateCreated, order: .reverse) private var pieces: [PianoPiece]
 
     @State private var showingAddSheet = false
+    @State private var piecePendingEdit: PianoPiece?
+    @State private var editedPieceName = ""
+    @State private var editedPieceDate = Date()
 
     private var activePieces: [PianoPiece] {
         pieces.filter { $0.status == .active }
@@ -84,6 +87,42 @@ struct TallyMethodView: View {
                 try? modelContext.save()
             }
         }
+        .sheet(
+            isPresented: Binding(
+                get: { piecePendingEdit != nil },
+                set: { if !$0 { piecePendingEdit = nil } }
+            )
+        ) {
+            NavigationStack {
+                Form {
+                    Section("Piece") {
+                        TextField("Piece name", text: $editedPieceName)
+                            .textInputAutocapitalization(.words)
+
+                        DatePicker(
+                            "Creation Date",
+                            selection: $editedPieceDate,
+                            displayedComponents: [.date]
+                        )
+                    }
+                }
+                .navigationTitle("Edit Piece")
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            piecePendingEdit = nil
+                        }
+                    }
+
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Save") {
+                            applyPieceEdit()
+                        }
+                        .disabled(editedPieceName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    }
+                }
+            }
+        }
         .onAppear {
             print(pieces)
         }
@@ -95,11 +134,20 @@ struct TallyMethodView: View {
             PianoPieceView(piece: piece)
         } label: {
             VStack(alignment: .leading, spacing: 4) {
-                Text(piece.name)
-                    .font(.headline)
+                HStack {
+                    Text("\(piece.name)")
+                        .font(.headline)
+                    Text("(\(pieceProgressCaption(for: piece)))")
+                        .font(.caption)
+                }
                 Text(piece.dateCreated, style: .date)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+            }
+        }
+        .contextMenu {
+            Button("Edit Piece", systemImage: "pencil") {
+                beginEditPiece(piece)
             }
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -131,6 +179,31 @@ struct TallyMethodView: View {
                 Label("Delete", systemImage: "trash")
             }
         }
+    }
+
+    private func pieceProgressCaption(for piece: PianoPiece) -> String {
+        let dayCount = Set(piece.entries.map { $0.day }).count
+        let sessionCount = piece.entries.count
+        let dayLabel = dayCount == 1 ? "day" : "days"
+        let sessionLabel = sessionCount == 1 ? "session" : "sessions"
+        return "\(dayCount) \(dayLabel), \(sessionCount) \(sessionLabel)"
+    }
+
+    private func beginEditPiece(_ piece: PianoPiece) {
+        piecePendingEdit = piece
+        editedPieceName = piece.name
+        editedPieceDate = piece.dateCreated
+    }
+
+    private func applyPieceEdit() {
+        guard let piece = piecePendingEdit else { return }
+        let trimmedName = editedPieceName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else { return }
+
+        piece.name = trimmedName
+        piece.dateCreated = editedPieceDate
+        try? modelContext.save()
+        piecePendingEdit = nil
     }
 }
 

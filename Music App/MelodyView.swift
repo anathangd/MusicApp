@@ -10,6 +10,8 @@ import AVFoundation
 
 struct MelodyView: View {
     @State private var testing = false
+    @AppStorage("customMelodyDefinitions") private var customMelodyDefinitions = "[]"
+    @State private var customMelodies: [CustomMelodyDefinition] = []
     
     @State var notes: [UInt8] = [71,69,62,72,71,69,67]
     @State var rootNoteLetter = "G"
@@ -22,8 +24,20 @@ struct MelodyView: View {
     @State var tempo = UserDefaults.standard.double(forKey: "tempo")//150.0
     @State var currentPhrase: MusicalPhrase?
     @State private var currentPhraseEvents: [PianoSequencePlayer.NoteEvent] = []
-    
-    let phrases: [MusicalPhrase] = MelodyCollection.phrases
+    @State private var currentMelodyName: String = ""
+
+    private typealias NamedPhrase = (name: String, phrase: MusicalPhrase)
+
+    private var trainingPhrases: [NamedPhrase] {
+        let builtIns = MelodyCollection.phrases.enumerated().map { i, phrase in
+            NamedPhrase(name: "Built-in \(i + 1)", phrase: phrase)
+        }
+        let custom = customMelodies.map { m in
+            NamedPhrase(name: m.name, phrase: m.toMusicalPhrase())
+        }
+        return builtIns + custom
+    }
+
     /// Indices of phrases we haven't heard yet in the current cycle (shuffled).
     @State private var remainingPhraseIndices: [Int] = []
     /// How many full cycles have been completed.
@@ -53,7 +67,7 @@ struct MelodyView: View {
                             playPair(startIndex: i)
                         } label: {
                             Text(ordinalLabel(i))
-                                .foregroundStyle(dist > 2 ? .red : .black)
+                                .foregroundStyle(dist > 2 ? .red : .primary)
                         }
                         .melodyMiniButtonStyle()
                     }
@@ -77,6 +91,11 @@ struct MelodyView: View {
                     .font(.system(size: 30))
                 Text(rootNoteLetter)
                     .font(.system(size: 80))
+                if !currentMelodyName.isEmpty {
+                    Text(currentMelodyName)
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
+                }
                 Button("Play Sequence") {
                     atonalAnswerString = ""
 
@@ -92,9 +111,9 @@ struct MelodyView: View {
                         PianoSequencePlayer.shared.play(phrase: phrase, startingNote: rootNote, tempoBPM: phrase.tempoBPM)
                     }
                 }
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .padding()
-                .background(.gray)
+                .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .padding()
                 
@@ -105,9 +124,9 @@ struct MelodyView: View {
                     counter += 1
                     nextPhrase()
                 }
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .padding()
-                .background(.gray)
+                .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .padding(20)
             }
@@ -119,16 +138,26 @@ struct MelodyView: View {
             }
         }
         .onAppear {
+            loadCustomMelodies()
             atonalAnswerString = ""
             counter = 0
             resetPhraseCycleIfNeeded(force: true)
             nextPhrase()
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink(destination: MelodyListView()) {
+                    Image(systemName: "list.bullet")
+                }
+                .accessibilityLabel("Melody List")
+            }
+        }
+        .navigationTitle("Melodies")
     }
     
     private func resetPhraseCycleIfNeeded(force: Bool = false) {
         if force || remainingPhraseIndices.isEmpty {
-            remainingPhraseIndices = Array(phrases.indices).shuffled()
+            remainingPhraseIndices = Array(trainingPhrases.indices).shuffled()
             if !force {
                 phraseCycleCount += 1
             }
@@ -136,20 +165,29 @@ struct MelodyView: View {
     }
 
     func nextPhrase() {
+        let availablePhrases = trainingPhrases
+        guard !availablePhrases.isEmpty else {
+            currentPhrase = nil
+            currentPhraseEvents = []
+            notes = []
+            return
+        }
+
         rootNote = UInt8(Int.random(in: 57...72))
         // Pick the next phrase from the remaining shuffled cycle.
         resetPhraseCycleIfNeeded()
         guard let nextIndex = remainingPhraseIndices.popLast() else { return }
-        let selected = testing ? MelodyCollection.phrases.last! : phrases[nextIndex]
-        currentPhrase = selected
+        let selected = testing ? availablePhrases.last! : availablePhrases[nextIndex]
+        currentPhrase = selected.phrase
+        currentMelodyName = selected.name
 
         // Keep `notes` in sync with the phrase so the UI can generate the correct number of buttons.
-        let events = selected.makeNoteEvents(startingNote: rootNote)
+        let events = selected.phrase.makeNoteEvents(startingNote: rootNote)
         currentPhraseEvents = events
         notes = events.map { $0.note }
 
         setRootNoteLetter(root: notes.first ?? 72)
-        PianoSequencePlayer.shared.playMelody(events: events, tempoBPM: selected.tempoBPM)
+        PianoSequencePlayer.shared.playMelody(events: events, tempoBPM: selected.phrase.tempoBPM)
         print("Phrase cycle #\(phraseCycleCount) — remaining in cycle: \(remainingPhraseIndices.count)")
     }
 
@@ -217,6 +255,19 @@ struct MelodyView: View {
         default: return "not found"
         }
     }
+
+    private func loadCustomMelodies() {
+        guard let data = customMelodyDefinitions.data(using: .utf8) else {
+            customMelodies = []
+            return
+        }
+
+        do {
+            customMelodies = try JSONDecoder().decode([CustomMelodyDefinition].self, from: data)
+        } catch {
+            customMelodies = []
+        }
+    }
 }
 
 private struct MelodyMiniButtonStyle: ViewModifier {
@@ -224,7 +275,7 @@ private struct MelodyMiniButtonStyle: ViewModifier {
         content
             .buttonStyle(.bordered)
             .font(.caption)
-            .background(.gray)
+            .background(Color(.secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }

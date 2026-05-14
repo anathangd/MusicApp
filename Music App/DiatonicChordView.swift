@@ -68,17 +68,17 @@ struct DiatonicChordView: View {
                 Button("Play Chords") {
                     playChords(chords: chords)
                 }
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .padding()
-                .background(.gray)
+                .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 
                 Button("Next") {
                     next()
                 }
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .padding()
-                .background(.gray)
+                .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .padding()
             } // main display

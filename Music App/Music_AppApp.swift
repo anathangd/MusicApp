@@ -7,9 +7,56 @@
 
 import SwiftUI
 import SwiftData
+import UIKit
+
+final class AppDelegate: NSObject, UIApplicationDelegate {
+    static var orientationLock: UIInterfaceOrientationMask = .portrait
+
+    func application(
+        _ application: UIApplication,
+        supportedInterfaceOrientationsFor window: UIWindow?
+    ) -> UIInterfaceOrientationMask {
+        Self.orientationLock
+    }
+}
+
+enum OrientationManager {
+    static func lockToPortrait() {
+        AppDelegate.orientationLock = .portrait
+        rotate(to: .portrait)
+    }
+
+    static func lockToLandscape() {
+        AppDelegate.orientationLock = .landscape
+        rotate(to: .landscapeRight)
+    }
+
+    private static func rotate(to orientation: UIInterfaceOrientation) {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+            return
+        }
+
+        if #available(iOS 16.0, *) {
+            let preferences = UIWindowScene.GeometryPreferences.iOS(interfaceOrientations: AppDelegate.orientationLock)
+            windowScene.requestGeometryUpdate(preferences)
+            windowScene.keyWindow?.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+        } else {
+            UIDevice.current.setValue(orientation.rawValue, forKey: "orientation")
+            UIViewController.attemptRotationToDeviceOrientation()
+        }
+    }
+}
+
+private extension UIWindowScene {
+    var keyWindow: UIWindow? {
+        windows.first(where: { $0.isKeyWindow })
+    }
+}
 
 @main
 struct Music_AppApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             PianoPiece.self,
@@ -38,6 +85,9 @@ struct Music_AppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .onAppear {
+                    OrientationManager.lockToPortrait()
+                }
         }
         .modelContainer(sharedModelContainer)
     }
