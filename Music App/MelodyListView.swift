@@ -54,8 +54,7 @@ struct MelodyListView: View {
         }
         .fullScreenCover(isPresented: $isShowingMelodyEntrySheet) {
             MelodyEntryView { savedMelody in
-                customMelodies.append(savedMelody)
-                saveCustomMelodies()
+                addMelody(savedMelody)
             }
         }
         .fullScreenCover(item: $melodyToEdit) { melody in
@@ -107,16 +106,32 @@ struct MelodyListView: View {
         }
     }
 
-    private func updateMelody(_ updatedMelody: CustomMelodyDefinition) {
-        guard let index = customMelodies.firstIndex(where: { $0.id == updatedMelody.id }) else {
-            return
+    private func addMelody(_ melody: CustomMelodyDefinition) {
+        loadCustomMelodies()
+
+        if let index = customMelodies.firstIndex(where: { $0.id == melody.id }) {
+            customMelodies[index] = melody
+        } else {
+            customMelodies.append(melody)
         }
 
-        customMelodies[index] = updatedMelody
+        saveCustomMelodies()
+    }
+
+    private func updateMelody(_ updatedMelody: CustomMelodyDefinition) {
+        loadCustomMelodies()
+
+        if let index = customMelodies.firstIndex(where: { $0.id == updatedMelody.id }) {
+            customMelodies[index] = updatedMelody
+        } else {
+            customMelodies.append(updatedMelody)
+        }
+
         saveCustomMelodies()
     }
 
     private func deleteMelody(_ melody: CustomMelodyDefinition) {
+        loadCustomMelodies()
         customMelodies.removeAll { $0.id == melody.id }
         saveCustomMelodies()
     }

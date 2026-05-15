@@ -42,12 +42,12 @@ private struct PianoPieceBackup: Codable {
 }
 
 private struct UserSettingsBackup: Codable {
-    var tempo: Double?
-    var lowest: Int?
-    var highest: Int?
-    var individualIntervalDirection: String?
-    var individualIntervalEnabledIntervals: String?
-    var singleChordSelectedNames: [String]?
+    var tempo: Double? = nil
+    var lowest: Int? = nil
+    var highest: Int? = nil
+    var individualIntervalDirection: String? = nil
+    var individualIntervalEnabledIntervals: String? = nil
+    var singleChordSelectedNames: [String]? = nil
 }
 
 private struct MusicAppBackup: Codable {
@@ -57,6 +57,41 @@ private struct MusicAppBackup: Codable {
     var melodies: [CustomMelodyDefinition]
     var tallyPieces: [PianoPieceBackup]
     var settings: UserSettingsBackup
+
+    private enum CodingKeys: String, CodingKey {
+        case version
+        case exportedAt
+        case instruments
+        case melodies
+        case tallyPieces
+        case settings
+    }
+
+    init(
+        version: Int = 2,
+        exportedAt: Date = Date(),
+        instruments: [CustomInstrumentDefinition],
+        melodies: [CustomMelodyDefinition],
+        tallyPieces: [PianoPieceBackup],
+        settings: UserSettingsBackup
+    ) {
+        self.version = version
+        self.exportedAt = exportedAt
+        self.instruments = instruments
+        self.melodies = melodies
+        self.tallyPieces = tallyPieces
+        self.settings = settings
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        version = try container.decodeIfPresent(Int.self, forKey: .version) ?? 1
+        exportedAt = try container.decodeIfPresent(Date.self, forKey: .exportedAt) ?? Date()
+        instruments = try container.decodeIfPresent([CustomInstrumentDefinition].self, forKey: .instruments) ?? []
+        melodies = try container.decodeIfPresent([CustomMelodyDefinition].self, forKey: .melodies) ?? []
+        tallyPieces = try container.decodeIfPresent([PianoPieceBackup].self, forKey: .tallyPieces) ?? []
+        settings = try container.decodeIfPresent(UserSettingsBackup.self, forKey: .settings) ?? UserSettingsBackup()
+    }
 }
 
 private struct MusicAppBackupDocument: FileDocument {
@@ -72,7 +107,9 @@ private struct MusicAppBackupDocument: FileDocument {
         guard let data = configuration.file.regularFileContents else {
             throw CocoaError(.fileReadCorruptFile)
         }
-        backup = try JSONDecoder().decode(MusicAppBackup.self, from: data)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        backup = try decoder.decode(MusicAppBackup.self, from: data)
     }
 
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
@@ -194,7 +231,9 @@ struct ContentView: View {
                 }
             }
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
+            OrientationManager.lockToPortrait()
             loadCustomInstruments()
         }
         .sheet(isPresented: $isShowingAddInstrumentSheet) {

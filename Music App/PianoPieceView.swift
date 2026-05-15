@@ -14,6 +14,7 @@ struct PianoPieceView: View {
     @Bindable var piece: PianoPiece
     @State private var showingCustomSectionSheet = false
     @State private var showingSectionTotalsSheet = false
+    @State private var showingHelpSheet = false
     @State private var customSectionName = ""
     @State private var showingRenameSectionAlert = false
     @State private var renameSectionName = ""
@@ -317,6 +318,13 @@ struct PianoPieceView: View {
         }
         .navigationTitle(piece.name)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    showingHelpSheet = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+            }
             ToolbarItemGroup(placement: .topBarTrailing) {
                 Button {
                     showingSectionTotalsSheet = true
@@ -365,6 +373,52 @@ struct PianoPieceView: View {
                     }
                 }
             }
+        }
+        .sheet(isPresented: $showingHelpSheet) {
+            NavigationStack {
+                List {
+                    Section("About") {
+                        Text("Track your practice sessions by counting the number of times you've played each section or range of sections of a piece.")
+                        Text("Depending on how difficult a section is, it can take anywhere from 100-200 repetitions before it starts to feel solid.")
+                    }
+                    
+                    Section("Sessions") {
+                        Text("Tap the + button at the top to add a new practice session. Sessions are grouped by day and numbered automatically.")
+                        Text("Use the ellipsis menu beside a session header to edit its date/time or delete the session.")
+                    }
+                    
+                    Section("Adding Sections") {
+                        Text("Use the Add buttons to add sections like A, B, C, or custom sections.")
+                        Text("You can create a custom range like \"A-E\" and it will count toward sections A, B, C, D, and E instead of appearing as its own total.")
+                    }
+
+                    Section("Sections") {
+                        Text("Tap a section’s + button to add one repetition.")
+                        Text("Long-press the + button to subtract one repetition.")
+                        Text("Swipe a section row to delete it or mark it memorized.")
+                        Text("Long-press a section name to rename it.")
+                    }
+
+                    Section("Totals") {
+                        Text("Tap the chart button at the top to see total reps across all sessions.")
+                        Text("Hand-specific sections like C LH, C RH are grouped under C in the totals sheet. (You must create custom C LH, C RH sections yourself.)")
+                    }
+
+                    Section("Notes") {
+                        Text("Use the note field to write observations, practice reminders, or problem spots for each session.")
+                    }
+                }
+                .navigationTitle("How to Use")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") {
+                            showingHelpSheet = false
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showingSectionTotalsSheet) {
             NavigationStack {

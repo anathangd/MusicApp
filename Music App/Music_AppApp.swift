@@ -32,7 +32,8 @@ enum OrientationManager {
     }
 
     private static func rotate(to orientation: UIInterfaceOrientation) {
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+        let windowScene = activeWindowScene()
+        guard let windowScene else {
             return
         }
 
@@ -44,6 +45,22 @@ enum OrientationManager {
             UIDevice.current.setValue(orientation.rawValue, forKey: "orientation")
             UIViewController.attemptRotationToDeviceOrientation()
         }
+    }
+
+    private static func activeWindowScene() -> UIWindowScene? {
+        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+
+        for scene in scenes where scene.activationState == .foregroundActive {
+            if scene.keyWindow != nil {
+                return scene
+            }
+        }
+
+        for scene in scenes where scene.activationState == .foregroundActive {
+            return scene
+        }
+
+        return nil
     }
 }
 

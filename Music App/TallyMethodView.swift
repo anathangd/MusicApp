@@ -123,6 +123,7 @@ struct TallyMethodView: View {
                 }
             }
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
             print(pieces)
         }

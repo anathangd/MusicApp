@@ -33,6 +33,7 @@ struct SequenceView: View {
     @State var correct = 0
     @State var percentage = ""
     @State var isEditing = false
+    @State private var showingAboutSheet = false
     
     let phrase: [PianoSequencePlayer.NoteEvent] = [
         .init(note: 60, startBeat: 0.0, durationBeats: 1.0),  // C quarter
@@ -50,6 +51,7 @@ struct SequenceView: View {
             VStack {
                 HStack {
                     Spacer()
+
                     if !practice {
                         Toggle("", isOn: $diatonic)
                             .padding(.horizontal)
@@ -209,11 +211,60 @@ struct SequenceView: View {
                 Text("You did it!🎉")
             }
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
             incorrect.removeAll()
             incorrectAnswers.removeAll()
             next()
             counter = 0
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    showingAboutSheet = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+            }
+        }
+        .sheet(isPresented: $showingAboutSheet) {
+            NavigationStack {
+                List {
+                    Section("Goal") {
+                        Text("Listen to the sequence, then identify the intervals or scale degrees you heard.")
+                        Text("Use the checkmark if you got it right, or the X if you missed it.")
+                    }
+
+                    Section("Modes") {
+                        Text("With the toggle off, the app picks two or three random atonal intervals between a given range.")
+                        Text("With the toggle on, the app picks diatonic intervals within a major, minor, or harmonic minor scale.")
+                    }
+
+                    Section("Replay") {
+                        Text("Tap Play Sequence to hear the full sequence again.")
+                        Text("Use First, Second, and Third to replay smaller parts of the sequence.")
+                    }
+
+                    Section("Practice Mode") {
+                        Text("Review sequences marked as incorrect in Practice Mode.")
+                        Text("Tap the practice button to review missed sequences until they are cleared.")
+                    }
+
+                    Section("Tempo") {
+                        Text("Use the slider at the bottom to adjust the playback speed.")
+                    }
+                }
+                .navigationTitle("About Sequences")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") {
+                            showingAboutSheet = false
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
     }
     
@@ -253,8 +304,14 @@ struct SequenceView: View {
         fourNote = false
         notes.removeAll()
         atonalAnswerString = ""
+        if let noteRange {
+            print("SequenceView range: \(noteRange.lowerBound)...\(noteRange.upperBound)")
+        } else {
+            print("SequenceView range: default 57...72")
+        }
         rootNote = randomRootNote()
-        notes.append(rootNote)
+        print("SequenceView root note: \(rootNote)")
+        appendNote(rootNote)
         if atonalFirstPress == true {
             atonalFirstPress = false
         }
@@ -633,6 +690,8 @@ struct SequenceView: View {
                 diatonicAnswerString += ", " + diatonicAnswer[3]
             }
         } else {
+            let lowerBound = noteRange?.lowerBound ?? 45
+            let upperBound = noteRange?.upperBound ?? 84
             let exerciseType = Int.random(in: 1...4)
             switch exerciseType {
             //regular pick anything
@@ -645,17 +704,17 @@ struct SequenceView: View {
                         let coinflip = Int.random(in: 1...2)
                         if coinflip == 1 {
                             nextNote = previousNote - nextNote
-                            if nextNote > 45 {
+                            if nextNote >= lowerBound {
                                 done = true
                             }
                         } else {
                             nextNote = previousNote + nextNote
-                            if nextNote <= 84 {
+                            if nextNote <= upperBound {
                                 done = true
                             }
                         }
                     }
-                    notes.append(nextNote)
+                    appendNote(nextNote)
                     answer[decision] = findInterval(distance: abs(Int(previousNote) - Int(nextNote)))
                     previousNote = nextNote
                 }
@@ -672,11 +731,17 @@ struct SequenceView: View {
                     picked.append(nextNote)
                     if coinflip == 1 { //above the root
                         nextNote = rootNote + nextNote
+                        while nextNote > upperBound {
+                            nextNote -= 12
+                        }
                     } else { //below the root
                         nextNote = rootNote - nextNote
+                        while nextNote < lowerBound {
+                            nextNote += 12
+                        }
                     }
                     answer[decision] = findInterval(distance: abs(Int(previousNote) - Int(nextNote)))
-                    notes.append(nextNote)
+                    appendNote(nextNote)
                     previousNote = nextNote
                 }
             //any four in the octave
@@ -693,11 +758,17 @@ struct SequenceView: View {
                     picked.append(nextNote)
                     if coinflip == 1 {
                         nextNote = rootNote + nextNote
+                        while nextNote > upperBound {
+                            nextNote -= 12
+                        }
                     } else {
                         nextNote = rootNote - nextNote
+                        while nextNote < lowerBound {
+                            nextNote += 12
+                        }
                     }
                     answer[decision] = findInterval(distance: abs(Int(previousNote) - Int(nextNote)))
-                    notes.append(nextNote)
+                    appendNote(nextNote)
                     previousNote = nextNote
                 }
             //walking up by half or whole
@@ -709,11 +780,17 @@ struct SequenceView: View {
                     nextNote = UInt8(Int.random(in: 1...2)) //half or whole only
                     if coinflip == 1 {
                         nextNote = previousNote + nextNote
+                        if nextNote > upperBound {
+                            nextNote = previousNote - (nextNote - previousNote)
+                        }
                     } else {
                         nextNote = previousNote - nextNote
+                        if nextNote < lowerBound {
+                            nextNote = previousNote + (previousNote - nextNote)
+                        }
                     }
                     answer[decision] = findInterval(distance: abs(Int(previousNote) - Int(nextNote)))
-                    notes.append(nextNote)
+                    appendNote(nextNote)
                     previousNote = nextNote
                 }
             default: print("something went wrong")
@@ -761,90 +838,112 @@ struct SequenceView: View {
     
     func majorScaleAscendingPicker(note: UInt8) {
         switch note {
-        case 1: notes.append(rootNote)
-        case 2: notes.append(rootNote + 2)
-        case 3: notes.append(rootNote + 4)
-        case 4: notes.append(rootNote + 5)
-        case 5: notes.append(rootNote + 7)
-        case 6: notes.append(rootNote + 9)
-        case 7: notes.append(rootNote + 11)
-        case 8: notes.append(rootNote + 12)
+        case 1: appendNote(rootNote)
+        case 2: appendNote(rootNote + 2)
+        case 3: appendNote(rootNote + 4)
+        case 4: appendNote(rootNote + 5)
+        case 5: appendNote(rootNote + 7)
+        case 6: appendNote(rootNote + 9)
+        case 7: appendNote(rootNote + 11)
+        case 8: appendNote(rootNote + 12)
         default: print("something went wrong")
         }
     }
     
     func majorScaleDescendingPicker(note: UInt8) {
         switch note {
-        case 1: notes.append(rootNote - 12)
-        case 2: notes.append(rootNote - 10)
-        case 3: notes.append(rootNote - 8)
-        case 4: notes.append(rootNote - 7)
-        case 5: notes.append(rootNote - 5)
-        case 6: notes.append(rootNote - 3)
-        case 7: notes.append(rootNote - 1)
-        case 8: notes.append(rootNote)
+        case 1: appendNote(rootNote - 12)
+        case 2: appendNote(rootNote - 10)
+        case 3: appendNote(rootNote - 8)
+        case 4: appendNote(rootNote - 7)
+        case 5: appendNote(rootNote - 5)
+        case 6: appendNote(rootNote - 3)
+        case 7: appendNote(rootNote - 1)
+        case 8: appendNote(rootNote)
         default: print("something went wrong")
         }
     }
     
     func minorScaleAscendingPicker(note: UInt8) {
         switch note {
-        case 1: notes.append(rootNote)
-        case 2: notes.append(rootNote + 2)
-        case 3: notes.append(rootNote + 3)
-        case 4: notes.append(rootNote + 5)
-        case 5: notes.append(rootNote + 7)
-        case 6: notes.append(rootNote + 8)
-        case 7: notes.append(rootNote + 10)
-        case 8: notes.append(rootNote + 12)
+        case 1: appendNote(rootNote)
+        case 2: appendNote(rootNote + 2)
+        case 3: appendNote(rootNote + 3)
+        case 4: appendNote(rootNote + 5)
+        case 5: appendNote(rootNote + 7)
+        case 6: appendNote(rootNote + 8)
+        case 7: appendNote(rootNote + 10)
+        case 8: appendNote(rootNote + 12)
         default: print("something went wrong")
         }
     }
     
     func minorScaleDescendingPicker(note: UInt8) {
         switch note {
-        case 1: notes.append(rootNote - 12)
-        case 2: notes.append(rootNote - 10)
-        case 3: notes.append(rootNote - 9)
-        case 4: notes.append(rootNote - 7)
-        case 5: notes.append(rootNote - 5)
-        case 6: notes.append(rootNote - 4)
-        case 7: notes.append(rootNote - 2)
-        case 8: notes.append(rootNote)
+        case 1: appendNote(rootNote - 12)
+        case 2: appendNote(rootNote - 10)
+        case 3: appendNote(rootNote - 9)
+        case 4: appendNote(rootNote - 7)
+        case 5: appendNote(rootNote - 5)
+        case 6: appendNote(rootNote - 4)
+        case 7: appendNote(rootNote - 2)
+        case 8: appendNote(rootNote)
         default: print("something went wrong")
         }
     }
     
     func harMinorScaleAscendingPicker(note: UInt8) {
         switch note {
-        case 1: notes.append(rootNote)
-        case 2: notes.append(rootNote + 2)
-        case 3: notes.append(rootNote + 3)
-        case 4: notes.append(rootNote + 5)
-        case 5: notes.append(rootNote + 7)
-        case 6: notes.append(rootNote + 8)
-        case 7: notes.append(rootNote + 11)
-        case 8: notes.append(rootNote + 12)
+        case 1: appendNote(rootNote)
+        case 2: appendNote(rootNote + 2)
+        case 3: appendNote(rootNote + 3)
+        case 4: appendNote(rootNote + 5)
+        case 5: appendNote(rootNote + 7)
+        case 6: appendNote(rootNote + 8)
+        case 7: appendNote(rootNote + 11)
+        case 8: appendNote(rootNote + 12)
         default: print("something went wrong")
         }
     }
     
     func harMinorScaleDescendingPicker(note: UInt8) {
         switch note {
-        case 1: notes.append(rootNote - 12)
-        case 2: notes.append(rootNote - 10)
-        case 3: notes.append(rootNote - 9)
-        case 4: notes.append(rootNote - 7)
-        case 5: notes.append(rootNote - 5)
-        case 6: notes.append(rootNote - 4)
-        case 7: notes.append(rootNote - 1)
-        case 8: notes.append(rootNote)
+        case 1: appendNote(rootNote - 12)
+        case 2: appendNote(rootNote - 10)
+        case 3: appendNote(rootNote - 9)
+        case 4: appendNote(rootNote - 7)
+        case 5: appendNote(rootNote - 5)
+        case 6: appendNote(rootNote - 4)
+        case 7: appendNote(rootNote - 1)
+        case 8: appendNote(rootNote)
         default: print("something went wrong")
         }
     }
+
+    private func appendNote(_ note: UInt8) {
+        if let noteRange {
+            let bounded = boundedNote(note, within: noteRange)
+            print("SequenceView note: \(note) -> \(bounded)")
+            notes.append(bounded)
+        } else {
+            print("SequenceView note: \(note)")
+            notes.append(note)
+        }
+    }
+
+    private func boundedNote(_ note: UInt8, within range: ClosedRange<UInt8>) -> UInt8 {
+        var result = note
+        while result > range.upperBound {
+            result -= 12
+        }
+        while result < range.lowerBound {
+            result += 12
+        }
+        return result
+    }
     
     func playSequence() {
-        print(notes)
+        print("SequenceView playback notes: \(notes)")
         // Uses PianoSequencePlayer (defined elsewhere in the project) to play via SoundFont.
         PianoSequencePlayer.shared.play(notes: notes, tempoBPM: tempo)
     }

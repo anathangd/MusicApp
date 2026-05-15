@@ -34,7 +34,7 @@ struct AddInstrumentSheet: View {
     }
 
     private var canSave: Bool {
-        !instrumentName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && highestNote > lowestNote
+        !instrumentName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && highestNote - lowestNote >= 12
     }
 
     var body: some View {
@@ -61,7 +61,7 @@ struct AddInstrumentSheet: View {
                         playPreview(note: newValue)
                     }
 
-                    Text("Choose any range you can comfortably sing or play.")
+                    Text("Choose any range you can comfortably sing or play. The range must span at least one octave.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -100,12 +100,12 @@ struct AddInstrumentSheet: View {
     private func syncRange(afterChanging changedSide: RangeSide) {
         switch changedSide {
         case .lowest(let newValue):
-            if newValue >= highestNote {
-                highestNote = min(newValue + 1, 108)
+            if newValue + 12 > highestNote {
+                highestNote = min(newValue + 12, 108)
             }
         case .highest(let newValue):
-            if newValue <= lowestNote {
-                lowestNote = max(newValue - 1, 21)
+            if newValue - 12 < lowestNote {
+                lowestNote = max(newValue - 12, 21)
             }
         }
     }

@@ -331,8 +331,11 @@ struct MusicalPhrase {
             let clampedMidi = UInt8(min(127, max(0, midiValue)))
 
             let duration = max(0.01, s.durationBeats)
+            // Use a slight gate so repeated notes at exact boundaries (same pitch)
+            // retrigger reliably instead of being canceled by coincident note-off events.
+            let gatedDuration = min(duration, max(0.01, duration * 0.9))
             events.append(
-                .init(note: clampedMidi, startBeat: currentBeat, durationBeats: duration, velocity: s.velocity)
+                .init(note: clampedMidi, startBeat: currentBeat, durationBeats: gatedDuration, velocity: s.velocity)
             )
 
             currentBeat += duration

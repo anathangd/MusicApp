@@ -37,6 +37,7 @@ struct DiatonicChordView: View {
     @State var nextStartingNotes = [0]
     @State var chordList = ["Maj9"]
     @State var spicy = false
+    @State private var showingAboutSheet = false
     var spicyMajor = ["Maj9", "Maj#11", "Maj13", "Maj6", "Maj6/9", "Maj6/9#11", "Maj6/9(#11,13)"]
     var spicyMinor = ["mM7", "min9", "min11", "min13", "min6", "min6/9", "min6/9(11)", "min6/9(11,13)"]
     var spicyDominant = ["7#5", "9", "9#5", "7(#9b5)", "7(#9#5)", "7(b9#9#5)", "7(#5b9#9#11)", "b9", "#9", "9(#11)", "13", "13(#11)", "13(b9#11)", "13(#9#11)", "7sus4", "9sus4", "13sus4", "7sus4(b9)", "13sus4(b9)"]
@@ -49,10 +50,11 @@ struct DiatonicChordView: View {
             VStack {
                 HStack {
                     Spacer()
+
                     VStack(alignment: .trailing) {
                         Toggle("", isOn: $spicy)
                             .tint(.purple)
-                        .padding(.horizontal)
+                            .padding(.horizontal)
                     }
                 }
                 Spacer()
@@ -94,9 +96,61 @@ struct DiatonicChordView: View {
                 
             } // answer
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
             next()
             counter = 0
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    showingAboutSheet = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+            }
+        }
+        .sheet(isPresented: $showingAboutSheet) {
+            NavigationStack {
+                List {
+                    Section("Goal") {
+                        Text("Listen to the chord progression and identify which chords were played.")
+                    }
+
+                    Section("Normal Mode") {
+                        Text("With the toggle off, the app plays three or four chords built from a major, minor, or harmonic minor scale.")
+                        Text("The chords could be triads with the octave doubled on top or seventh chords, making this the practical mode for training diatonic harmony.")
+                    }
+
+                    Section("Extended Mode") {
+                        Text("With the toggle on, the app draws from the full chord list, including extended and altered chords.")
+                        Text("This mode was made for experimental use and might be impossible to identify by ear, but it can be useful for hearing advanced chord colors.")
+                    }
+                    
+                    Section("Roman Numerals") {
+                        Text("Uppercase Roman numerals indicate major chords.")
+                        Text("Lowercase Roman numerals indicate minor chords.")
+                        Text("° indicates diminished and ∅ indicates half-diminished.")
+                        Text("7 indicates a seventh chord.")
+                    }
+
+                    Section("Controls") {
+                        Text("Tap Play Chords to hear the current progression again.")
+                        Text("Tap Next to generate a new progression.")
+                        Text("Use the purple toggle to switch between normal and extended chord mode.")
+                    }
+                }
+                .navigationTitle("About Diatonic Chords")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") {
+                            showingAboutSheet = false
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
     }
     

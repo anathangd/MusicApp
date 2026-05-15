@@ -13,7 +13,47 @@ struct CustomMelodyStep: Identifiable, Codable, Hashable {
     var accidental: Int
     var octave: Int
     var durationBeats: Double
+    var isTriplet: Bool = false
     var velocity: UInt8 = 100
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case degree
+        case accidental
+        case octave
+        case durationBeats
+        case isTriplet
+        case velocity
+    }
+
+    init(
+        id: UUID = UUID(),
+        degree: Int,
+        accidental: Int,
+        octave: Int,
+        durationBeats: Double,
+        isTriplet: Bool = false,
+        velocity: UInt8 = 100
+    ) {
+        self.id = id
+        self.degree = degree
+        self.accidental = accidental
+        self.octave = octave
+        self.durationBeats = durationBeats
+        self.isTriplet = isTriplet
+        self.velocity = velocity
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        degree = try container.decodeIfPresent(Int.self, forKey: .degree) ?? 1
+        accidental = try container.decodeIfPresent(Int.self, forKey: .accidental) ?? 0
+        octave = try container.decodeIfPresent(Int.self, forKey: .octave) ?? 0
+        durationBeats = try container.decodeIfPresent(Double.self, forKey: .durationBeats) ?? 0.5
+        isTriplet = try container.decodeIfPresent(Bool.self, forKey: .isTriplet) ?? false
+        velocity = try container.decodeIfPresent(UInt8.self, forKey: .velocity) ?? 100
+    }
 
     func toPhraseStep() -> MusicalPhrase.Step {
         let phraseAccidental: MusicalPhrase.Step.Accidental
@@ -26,13 +66,34 @@ struct CustomMelodyStep: Identifiable, Codable, Hashable {
             phraseAccidental = .natural
         }
 
+        let playbackDuration: Double
+        let useTripletGrid = isTriplet || Self.isTripletLikeDuration(durationBeats)
+        if useTripletGrid {
+            // Snap triplets to a 1/3-beat grid for consistent triplet feel.
+            playbackDuration = max(1.0 / 3.0, (durationBeats * 3.0).rounded() / 3.0)
+        } else {
+            // Keep regular notes aligned to 1/4-beat increments.
+            playbackDuration = max(0.25, (durationBeats * 4.0).rounded() / 4.0)
+        }
+
         return MusicalPhrase.Step(
             degree: max(1, min(7, degree)),
             accidental: phraseAccidental,
             octave: octave,
-            durationBeats: max(0.25, durationBeats),
+            durationBeats: playbackDuration,
             velocity: velocity
         )
+    }
+
+    private static func isTripletLikeDuration(_ value: Double) -> Bool {
+        guard value > 0 else { return false }
+
+        let nearestTriplet = (value * 3.0).rounded() / 3.0
+        let nearestStraight = (value * 4.0).rounded() / 4.0
+        let tripletDelta = abs(value - nearestTriplet)
+        let straightDelta = abs(value - nearestStraight)
+
+        return tripletDelta < 0.02 && tripletDelta + 0.0001 < straightDelta
     }
 }
 
@@ -54,6 +115,7 @@ struct CustomMelodyDefinition: Identifiable, Codable, Hashable {
 
 struct MelodyEntryView: View {
     @Environment(\.dismiss) private var dismiss
+    private let maximumRecordedNotes = 30
 
     private let initialMelody: CustomMelodyDefinition?
     private let onSave: (CustomMelodyDefinition) -> Void
@@ -65,6 +127,9 @@ struct MelodyEntryView: View {
     @State private var tempoBPM: Double
     @State private var steps: [CustomMelodyStep]
     @State private var recording: Bool = false
+    @State private var showingAboutSheet = false
+    @State private var showingNoteLimitAlert = false
+    @FocusState private var isMelodyNameFocused: Bool
 
     init(
         initialMelody: CustomMelodyDefinition? = nil,
@@ -94,6 +159,15 @@ struct MelodyEntryView: View {
                                 .padding(.top, 8)
                         }
                         .buttonStyle(.plain)
+
+                        Button {
+                            showingAboutSheet = true
+                        } label: {
+                            Image(systemName: "questionmark.circle")
+                                .font(.system(size: 28))
+                                .padding(.top, 8)
+                        }
+                        .buttonStyle(.plain)
                         
                         Spacer()
                         
@@ -101,10 +175,13 @@ struct MelodyEntryView: View {
                             .frame(width: 350, height: 40)
                             .textFieldStyle(.roundedBorder)
                             .padding(.top, 8)
+                            .focused($isMelodyNameFocused)
                         
                         Spacer()
                         
                         Button {
+                            isMelodyNameFocused = false
+                            dismissKeyboard()
                             dismiss()
                         } label: {
                             Text("Discard")
@@ -118,6 +195,8 @@ struct MelodyEntryView: View {
                         .buttonStyle(.plain)
 
                         Button {
+                            isMelodyNameFocused = false
+                            dismissKeyboard()
                             saveMelody()
                         } label: {
                             Text("Save")
@@ -267,11 +346,71 @@ struct MelodyEntryView: View {
                 }
             }
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
             OrientationManager.lockToLandscape()
         }
         .onDisappear {
+            isMelodyNameFocused = false
+            dismissKeyboard()
             OrientationManager.lockToPortrait()
+        }
+        .sheet(isPresented: $showingAboutSheet) {
+            NavigationStack {
+                List {
+                    Section("About") {
+                        Text("Create melodies that will play in different keys for great ear training practice!")
+                        Text("The goal is to be able to hear a melody and play it back by ear.")
+                    }
+                    
+                    Section("Recording") {
+                        Text("Tap the red recording toggle, then tap the numbered keys to add notes to the melody.")
+                        Text("When recording is off, tapping a key previews the note without adding it.")
+                    }
+
+                    Section("Keys") {
+                        Text("The numbered keys represent scale degrees 1 through 7.")
+                        Text("The middle 1 starts at the selected octave.")
+                    }
+
+                    Section("Root and Mode") {
+                        Text("Use the root note control to transpose the melody by half step, such as C4, D♭4, or D4 in case you're trying to figure out notes played in a specific key.")
+                        Text("Tap the major/minor button to switch the scale mode.")
+                    }
+
+                    Section("Editing Notes") {
+                        Text("Use ♭ and ♯ to add accidentals. If a note already has that accidental, the button changes to ♮ so you can return it to normal.")
+                        Text("Use + and - around the duration value to change how long the note lasts.")
+                        Text("Long-press the duration value to switch between normal values and triplet values such as 0.33 and 0.67.")
+                    }
+
+                    Section("Playback") {
+                        Text("Tap the play button to hear the full melody.")
+                        Text("Tap Tempo to increase the tempo. Long-press Tempo to decrease it.")
+                    }
+                }
+                .navigationTitle("About Melody Entry")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") {
+                            showingAboutSheet = false
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
+        .onChange(of: recording) { newValue in
+            if newValue && steps.count >= maximumRecordedNotes {
+                recording = false
+                showingNoteLimitAlert = true
+            }
+        }
+        .alert("Note limit reached", isPresented: $showingNoteLimitAlert) {
+            Button("My bad", role: .cancel) { }
+        } message: {
+            Text("The limit is 30 notes.")
         }
     }
 
@@ -287,7 +426,16 @@ struct MelodyEntryView: View {
         playStep(step)
 
         if recording {
+            guard steps.count < maximumRecordedNotes else {
+                recording = false
+                return
+            }
+
             steps.append(step)
+
+            if steps.count == maximumRecordedNotes {
+                recording = false
+            }
         }
     }
 
@@ -349,6 +497,10 @@ struct MelodyEntryView: View {
             tempoBPM: tempoBPM,
             steps: steps
         )
+    }
+
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
 
@@ -460,7 +612,7 @@ struct MelodyNote: View {
                 
                 HStack(spacing: 10) {
                     Button("-") {
-                        step.durationBeats = max(durationStep, step.durationBeats - durationStep)
+                        step.durationBeats = max(durationStep, roundedDuration(step.durationBeats - durationStep))
                     }
                     .buttonStyle(.bordered)
                     
@@ -474,7 +626,7 @@ struct MelodyNote: View {
                         }
                     
                     Button("+") {
-                        step.durationBeats = min(4, step.durationBeats + durationStep)
+                        step.durationBeats = min(4, roundedDuration(step.durationBeats + durationStep))
                     }
                     .buttonStyle(.bordered)
                 }
@@ -506,29 +658,28 @@ struct MelodyNote: View {
     }
 
     private var isTripletDuration: Bool {
-        let tripletUnit = 1.0 / 3.0
-        let multiple = (step.durationBeats / tripletUnit).rounded()
-        return abs(step.durationBeats - (multiple * tripletUnit)) < 0.001
+        step.isTriplet
     }
 
     private var durationStep: Double {
         isTripletDuration ? (1.0 / 3.0) : 0.25
     }
+    
+    private func roundedDuration(_ value: Double) -> Double {
+        let unit = durationStep
+        return (value / unit).rounded() * unit
+    }
 
-    private var durationText: String {
-        if isTripletDuration {
-            let numerator = Int((step.durationBeats / (1.0 / 3.0)).rounded())
-            return "\(String(format: "%.2f", step.durationBeats))"
-        }
-
-        return String(format: "%.2f", step.durationBeats)
+    private var durationText: String {return String(format: "%.2f", step.durationBeats)
     }
 
     private func toggleTripletDuration() {
-        if isTripletDuration {
-            step.durationBeats = 0.5
-        } else {
+        step.isTriplet.toggle()
+
+        if step.isTriplet {
             step.durationBeats = 1.0 / 3.0
+        } else {
+            step.durationBeats = 0.5
         }
     }
 

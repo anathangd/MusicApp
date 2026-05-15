@@ -18,6 +18,7 @@ struct SingleChordView: View {
     @State var singles = true
     @State var singlesAnswer = "default"
     @State var settings = false
+    @State private var showingAboutSheet = false
     
     @State private var showNoChordsAlert = false
     private let chordOptionsStorageKey = "SingleChordView.selectedChordNames"
@@ -108,6 +109,7 @@ struct SingleChordView: View {
                     Spacer()
                     VStack(alignment: .trailing) {
                         Button {
+                            OrientationManager.lockToPortrait()
                             settings = true
                         } label: {
                             Image(systemName: "gearshape")
@@ -131,7 +133,7 @@ struct SingleChordView: View {
                 Text(rootNoteLetter)
                     .font(.system(size: 80))
                     .allowsHitTesting(false)
-                Button("Play Chords") {
+                Button("Play Chord") {
                     playChords(chords: chords)
                 }
                 .foregroundStyle(.primary)
@@ -159,86 +161,132 @@ struct SingleChordView: View {
             
             // settings sheet handled below
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
             loadChordSettings()
             next()
             counter = 0
         }
-        .fullScreenCover(isPresented: $settings) {
+        .navigationDestination(isPresented: $settings) {
             settingsView
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    showingAboutSheet = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+            }
+        }
+        .sheet(isPresented: $showingAboutSheet) {
+            NavigationStack {
+                List {
+                    Section("Goal") {
+                        Text("Listen to the chord and identify its quality by ear.")
+                    }
+
+                    Section("Controls") {
+                        Text("Tap Play Chord to hear the current chord again.")
+                        Text("Tap anywhere to reveal the answer.")
+                        Text("Tap Next to generate a new chord.")
+                    }
+
+                    Section("Settings") {
+                        Text("Use the gear button to choose which chord types can appear in the exercise.")
+                        Text("Normal chords are enabled by default. Extended chords can be added for more advanced practice.")
+                    }
+                }
+                .navigationTitle("About Chords")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") {
+                            showingAboutSheet = false
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
     }
 
     private var settingsView: some View {
-        NavigationStack {
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 12) {
-                    Toggle("Toggle All", isOn: Binding(
-                        get: { chordOptions.allSatisfy { $0.isOn } },
-                        set: { toggleAll($0) }
-                    ))
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                Toggle("Toggle All", isOn: Binding(
+                    get: { chordOptions.allSatisfy { $0.isOn } },
+                    set: { toggleAll($0) }
+                ))
 
-                    ForEach(ChordCategory.allCases, id: \.self) { category in
-                        if category.rawValue == "Normal" {
-                            HStack {
-                                Text(category.rawValue)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Spacer()
-                                Toggle(isOn: Binding(
-                                    get: { chordOptions.filter { $0.category == .normal }.allSatisfy { $0.isOn } },
-                                    set: { newValue in
-                                        for i in chordOptions.indices where chordOptions[i].category == .normal {
-                                            chordOptions[i].isOn = newValue
-                                        }
-                                    }
-                                )) {}
-                                .scaleEffect(0.5)
-                                .labelsHidden()
-                            }
-                            .padding(.top, 10)
-                        } else {
+                ForEach(ChordCategory.allCases, id: \.self) { category in
+                    if category.rawValue == "Normal" {
+                        HStack {
                             Text(category.rawValue)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
-                                .padding(.top, 10)
+                            Spacer()
+                            Toggle(isOn: Binding(
+                                get: { chordOptions.filter { $0.category == .normal }.allSatisfy { $0.isOn } },
+                                set: { newValue in
+                                    for i in chordOptions.indices where chordOptions[i].category == .normal {
+                                        chordOptions[i].isOn = newValue
+                                    }
+                                }
+                            )) {}
+                            .scaleEffect(0.5)
+                            .labelsHidden()
                         }
+                        .padding(.top, 10)
+                    } else {
+                        Text(category.rawValue)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.top, 10)
+                    }
 
-                        Divider()
+                    Divider()
 
-                        ForEach(chordOptions.indices.filter { chordOptions[$0].category == category }, id: \.self) { i in
-                            HStack {
-                                Text(chordOptions[i].name)
-                                Spacer()
-                                Toggle("", isOn: $chordOptions[i].isOn)
-                                    .labelsHidden()
-                            }
+                    ForEach(chordOptions.indices.filter { chordOptions[$0].category == category }, id: \.self) { i in
+                        HStack {
+                            Text(chordOptions[i].name)
+                            Spacer()
+                            Toggle("", isOn: $chordOptions[i].isOn)
+                                .labelsHidden()
                         }
                     }
-                }
-                .padding()
-            }
-            .background(Color(.systemBackground))
-            .navigationTitle("Chord Settings")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
-                        if chosenChords.isEmpty {
-                            showNoChordsAlert = true
-                        } else {
-                            saveChordSettings()
-                            settings = false
-                            next()
-                        }
+
+                    if category == .normal {
+                        Text("super-diminished is a fully-diminished 7th chord with the octave doubled on top, played with all five fingers.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.top, 4)
                     }
                 }
             }
-            .alert("No chords selected", isPresented: $showNoChordsAlert) {
-                Button("My bad", role: .cancel) { }
-            } message: {
-                Text("Please select at least one chord before proceeding.")
+            .padding()
+        }
+        .background(Color(.systemBackground))
+        .navigationTitle("Chord Settings")
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Done") {
+                    if chosenChords.isEmpty {
+                        showNoChordsAlert = true
+                    } else {
+                        saveChordSettings()
+                        settings = false
+                        next()
+                    }
+                }
             }
         }
+        .alert("No chords selected", isPresented: $showNoChordsAlert) {
+            Button("My bad", role: .cancel) { }
+        } message: {
+            Text("Please select at least one chord before proceeding.")
+        }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
     func toggleAll(_ on: Bool) {
         for i in chordOptions.indices {

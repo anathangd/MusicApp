@@ -137,6 +137,7 @@ struct MelodyView: View {
                 
             }
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
             loadCustomMelodies()
             atonalAnswerString = ""

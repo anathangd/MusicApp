@@ -41,7 +41,10 @@ struct IndividualIntervalView: View {
     @State var howMany = 1  //one extra note after the root, loop starts at 0
     @State var answer = ["Perfect fifth", "minor third", "Major second"]
     @State var atonalAnswerString = "Perfect fifth, minor third"
-    @State var tempo = UserDefaults.standard.double(forKey: "tempo")//150.0
+    @State var tempo: Double = {
+        let savedTempo = UserDefaults.standard.double(forKey: "tempo")
+        return savedTempo == 0 ? 150 : savedTempo
+    }()
     @State var correct = 0
     @State var percentage = ""
     @State var isEditing = false
@@ -59,6 +62,9 @@ struct IndividualIntervalView: View {
     @State private var showAnswer = false
     @State private var selectedDirection: IntervalDirection = .upAndDown
     @State private var enabledIntervals = Set(1...12)
+    @State private var showingAboutSheet = false
+    @State private var showingNoIntervalsAlert = false
+    @State private var settingsPresentationID = UUID()
     
     var body: some View {
         ZStack {
@@ -75,6 +81,9 @@ struct IndividualIntervalView: View {
                     VStack {
                         if !practice {
                             Button {
+                                dismissKeyboard()
+                                OrientationManager.lockToPortrait()
+                                settingsPresentationID = UUID()
                                 settings = true
                             } label: {
                                 Image(systemName: "gearshape")
@@ -204,15 +213,70 @@ struct IndividualIntervalView: View {
                 Text("You did it!🎉")
             }
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .onAppear {
             loadSavedIntervalSettings()
+            loadSavedIntervalRange()
             incorrect.removeAll()
             incorrectAnswers.removeAll()
             next()
             counter = 0
         }
-        .fullScreenCover(isPresented: $settings) {
+        .navigationDestination(isPresented: $settings) {
             settingsView
+                .id(settingsPresentationID)
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    showingAboutSheet = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+            }
+        }
+        .sheet(isPresented: $showingAboutSheet) {
+            NavigationStack {
+                List {
+                    Section("Goal") {
+                        Text("Listen to the interval and identify the distance between the two notes. Tap anywhere to reveal the correct answer.")
+                        Text("Use the checkmark if you got it right or the X if you missed it.")
+                    }
+
+                    Section("Interval Range") {
+                        Text("Use Lowest and Highest to limit the playable range for the exercise.")
+                        Text("You can use this to practice within the range of a specific instrument or vocal range, or to avoid extremely low and high registers where intervals can become difficult to hear clearly.")
+                    }
+
+                    Section("Direction") {
+                        Text("Choose whether intervals move upward, downward, or both.")
+                    }
+
+                    Section("Intervals") {
+                        Text("Enable or disable specific intervals to focus on problem areas.")
+                        Text("Full Practice quickly restores all intervals and both directions.")
+                    }
+
+                    Section("Practice Mode") {
+                        Text("Review intervals marked as incorrect in Practice Mode.")
+                        Text("Tap the practice button to review missed intervals until you clear them.")
+                    }
+
+                    Section("Tempo") {
+                        Text("Use the slider at the bottom to adjust playback speed.")
+                    }
+                }
+                .navigationTitle("About Intervals")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") {
+                            showingAboutSheet = false
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
     }
     
@@ -230,7 +294,7 @@ struct IndividualIntervalView: View {
                             Button("-") {
                                 if lowest > absoluteLowest {
                                     lowest -= 1
-                                    UserDefaults.standard.set(lowest, forKey: "lowest")
+                                    saveIntervalRange()
                                     playSingleNote(lowest)
                                 }
                             }
@@ -248,7 +312,7 @@ struct IndividualIntervalView: View {
                             Button("+") {
                                 if highest - lowest > 12 {
                                     lowest += 1
-                                    UserDefaults.standard.set(lowest, forKey: "lowest")
+                                    saveIntervalRange()
                                     playSingleNote(lowest)
                                 }
                             }
@@ -272,7 +336,7 @@ struct IndividualIntervalView: View {
                             Button("-") {
                                 if highest - lowest > 12 {
                                     highest -= 1
-                                    UserDefaults.standard.set(highest, forKey: "highest")
+                                    saveIntervalRange()
                                     playSingleNote(highest)
                                 }
                             }
@@ -290,7 +354,7 @@ struct IndividualIntervalView: View {
                             Button("+") {
                                 if highest < absoluteHighest {
                                     highest += 1
-                                    UserDefaults.standard.set(highest, forKey: "highest")
+                                    saveIntervalRange()
                                     playSingleNote(highest)
                                 }
                             }
@@ -341,6 +405,7 @@ struct IndividualIntervalView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
             .padding()
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color(.systemBackground))
@@ -348,12 +413,32 @@ struct IndividualIntervalView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
-                        settings = false
-                        next()
+                        if enabledIntervals.isEmpty {
+                            showingNoIntervalsAlert = true
+                        } else {
+                            saveIntervalRange()
+                            settings = false
+                            next()
+                        }
                     }
                 }
             }
+            .alert("No intervals selected", isPresented: $showingNoIntervalsAlert) {
+                Button("My bad", role: .cancel) { }
+            } message: {
+                Text("Please select at least one interval before proceeding.")
+            }
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .ignoresSafeArea(edges: .bottom)
+        .onAppear {
+            OrientationManager.lockToPortrait()
+            dismissKeyboard()
+        }
+    }
+
+    private func dismissKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
     
     func nextPractice() {
@@ -548,6 +633,24 @@ struct IndividualIntervalView: View {
             enabledIntervals.sorted().map(String.init).joined(separator: ","),
             forKey: "individualIntervalEnabledIntervals"
         )
+    }
+
+    private func loadSavedIntervalRange() {
+        let savedLowest = UserDefaults.standard.integer(forKey: "lowest")
+        let savedHighest = UserDefaults.standard.integer(forKey: "highest")
+
+        if savedLowest != 0 {
+            lowest = max(absoluteLowest, min(savedLowest, absoluteHighest - 12))
+        }
+
+        if savedHighest != 0 {
+            highest = min(absoluteHighest, max(savedHighest, lowest + 12))
+        }
+    }
+
+    private func saveIntervalRange() {
+        UserDefaults.standard.set(lowest, forKey: "lowest")
+        UserDefaults.standard.set(highest, forKey: "highest")
     }
     
     func findInterval(distance: Int) -> String {
