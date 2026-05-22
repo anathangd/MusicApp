@@ -10,6 +10,7 @@ import AVFoundation
 
 struct SequenceView: View {
     let noteRange: ClosedRange<UInt8>?
+    let soundFontID: UUID?
     
     @State var notes: [UInt8] = [71,69,62,72,71,69,67]
     @State var incorrect: [[UInt8]] = [[70,71,72], [70,71,72], [70,71,72]]
@@ -42,8 +43,9 @@ struct SequenceView: View {
         .init(note: 67, startBeat: 2.0, durationBeats: 2.0)   // G half
     ]
 
-    init(noteRange: ClosedRange<UInt8>? = nil) {
+    init(noteRange: ClosedRange<UInt8>? = nil, soundFontID: UUID? = nil) {
         self.noteRange = noteRange
+        self.soundFontID = soundFontID
     }
     
     var body: some View {
@@ -215,8 +217,23 @@ struct SequenceView: View {
         .onAppear {
             incorrect.removeAll()
             incorrectAnswers.removeAll()
-            next()
             counter = 0
+
+            if let id = soundFontID, let url = SoundFontStore.shared.fileURL(for: id) {
+                PianoSequencePlayer.shared.loadSoundFont(url: url)
+                // Give the sampler a brief moment to settle after a SoundFont swap.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
+                    next()
+                }
+            } else {
+                next()
+            }
+        }
+        .onDisappear {
+            // Restore default SoundFont when leaving a custom-instrument view.
+            if soundFontID != nil, let url = SoundFontStore.shared.defaultSoundFontURL {
+                PianoSequencePlayer.shared.loadSoundFont(url: url)
+            }
         }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {

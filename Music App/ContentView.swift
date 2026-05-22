@@ -20,6 +20,7 @@ struct CustomInstrumentDefinition: Identifiable, Codable, Hashable {
     var name: String
     var lowestNote: Int
     var highestNote: Int
+    var soundFontID: UUID? = nil
 }
 
 private struct TallyMethodEntryBackup: Codable {
@@ -51,9 +52,11 @@ private struct UserSettingsBackup: Codable {
 }
 
 private struct MusicAppBackup: Codable {
-    var version: Int = 2
+    var version: Int = 3
     var exportedAt: Date = Date()
     var instruments: [CustomInstrumentDefinition]
+    var soundFonts: [SoundFontDefinition]
+    var soundFontAssets: [SoundFontAssetArchive]
     var melodies: [CustomMelodyDefinition]
     var tallyPieces: [PianoPieceBackup]
     var settings: UserSettingsBackup
@@ -62,15 +65,19 @@ private struct MusicAppBackup: Codable {
         case version
         case exportedAt
         case instruments
+        case soundFonts
+        case soundFontAssets
         case melodies
         case tallyPieces
         case settings
     }
 
     init(
-        version: Int = 2,
+        version: Int = 3,
         exportedAt: Date = Date(),
         instruments: [CustomInstrumentDefinition],
+        soundFonts: [SoundFontDefinition],
+        soundFontAssets: [SoundFontAssetArchive],
         melodies: [CustomMelodyDefinition],
         tallyPieces: [PianoPieceBackup],
         settings: UserSettingsBackup
@@ -78,6 +85,8 @@ private struct MusicAppBackup: Codable {
         self.version = version
         self.exportedAt = exportedAt
         self.instruments = instruments
+        self.soundFonts = soundFonts
+        self.soundFontAssets = soundFontAssets
         self.melodies = melodies
         self.tallyPieces = tallyPieces
         self.settings = settings
@@ -88,6 +97,8 @@ private struct MusicAppBackup: Codable {
         version = try container.decodeIfPresent(Int.self, forKey: .version) ?? 1
         exportedAt = try container.decodeIfPresent(Date.self, forKey: .exportedAt) ?? Date()
         instruments = try container.decodeIfPresent([CustomInstrumentDefinition].self, forKey: .instruments) ?? []
+        soundFonts = try container.decodeIfPresent([SoundFontDefinition].self, forKey: .soundFonts) ?? []
+        soundFontAssets = try container.decodeIfPresent([SoundFontAssetArchive].self, forKey: .soundFontAssets) ?? []
         melodies = try container.decodeIfPresent([CustomMelodyDefinition].self, forKey: .melodies) ?? []
         tallyPieces = try container.decodeIfPresent([PianoPieceBackup].self, forKey: .tallyPieces) ?? []
         settings = try container.decodeIfPresent(UserSettingsBackup.self, forKey: .settings) ?? UserSettingsBackup()
@@ -138,6 +149,7 @@ struct ContentView: View {
     @State private var isShowingBackupAlert = false
     @State private var pendingImportBackup: MusicAppBackup?
     @State private var isShowingImportModeAlert = false
+    @State private var isShowingHelpSheet = false
     
     var body: some View {
         NavigationStack {
@@ -164,6 +176,13 @@ struct ContentView: View {
 
                         Spacer()
                         
+                        NavigationLink(destination: SoundFontManagementView()) {
+                            Image(systemName: "waveform")
+                                .padding(.top, 10)
+                                .padding(.trailing, 12)
+                                .font(.system(size: 20))
+                        }
+
                         Button {
                             isShowingAddInstrumentSheet = true
                         } label: {
@@ -213,7 +232,7 @@ struct ContentView: View {
                         }
 
                         ForEach(customInstruments) { instrument in
-                            NavigationLink(destination: SequenceView(noteRange: instrument.noteRange)) {
+                            NavigationLink(destination: SequenceView(noteRange: instrument.noteRange, soundFontID: instrument.soundFontID)) {
                                 Text(instrument.name)
                                     .capsuleButtonStyle(color: .blue)
                             }
@@ -228,6 +247,26 @@ struct ContentView: View {
                             }
                         }
                     }
+                }
+                // Bottom-left help button
+                VStack {
+                    Spacer()
+
+                    HStack {
+                        Button {
+                            isShowingHelpSheet = true
+                        } label: {
+                            Image(systemName: "questionmark")
+                                .font(.system(size: 24))
+                                .foregroundStyle(.blue)
+                                .padding(10)
+                        }
+                        .accessibilityLabel("Help")
+
+                        Spacer()
+                    }
+                    .padding(.leading, 16)
+                    .padding(.bottom, 16)
                 }
             }
         }
@@ -250,6 +289,64 @@ struct ContentView: View {
             ) { updated in
                 updateCustomInstrument(updated)
             }
+        }
+        .sheet(isPresented: $isShowingHelpSheet) {
+            NavigationStack {
+                List {
+                    Section("About") {
+                        Text("This app is designed as a practice and ear training tool and assumes basic familiarity with music theory concepts such as intervals, scales, and chord names.")
+                    }
+                    
+                    Section("Top Buttons") {
+                        Label("Export backup", systemImage: "square.and.arrow.up")
+                        Text("Creates a single backup file with your instruments, melodies, tally data, settings, and imported SoundFonts.")
+
+                        Label("Import backup", systemImage: "square.and.arrow.down")
+                        Text("Restores a backup file. Use Merge to add/update, or Replace to overwrite existing app data.")
+
+                        Label("SoundFonts", systemImage: "waveform")
+                        Text("Open SoundFont Manager to import, rename, delete, and choose the default SoundFont.")
+
+                        Label("Add instrument", systemImage: "plus")
+                        Text("Create a custom instrument and optionally assign a specific SoundFont.")
+                    }
+                    
+                    Section("What is a SoundFont?") {
+                        Text("A SoundFont is a file that tells the app what the notes should sound like, such as a piano, synth, or other instrument.")
+                        Text("Without an imported SoundFont, playback uses a simple built-in tone. Importing a SoundFont can make the exercises sound much more realistic.")
+                    }
+
+                    Section("Copyright Note") {
+                        Text("You can import your own .sf2 SoundFonts to customize the sound of the exercises.")
+                        Text("Users are responsible for ensuring they have the rights to use imported SoundFonts.")
+                    }
+
+                    Section("How to Find SoundFonts") {
+                        Text("Search online for terms like \"piano soundfont .sf2\", \"orchestra soundfont .sf2\", or \"public domain soundfont .sf2\".")
+                        Text("Look for SoundFonts with clear licenses or usage terms.")
+                        Text("Since imported SoundFonts are user-provided, choose files you are comfortable using privately on your device.")
+                        Text("Download the .sf2 file to Files or iCloud Drive so the app can import it.")
+                    }
+
+                    Section("How to Install SoundFonts") {
+                        Text("1. Tap the waveform button at the top right.")
+                        Text("2. Tap + in the SoundFonts screen.")
+                        Text("3. Pick an .sf2 file from Files.")
+                        Text("4. Optional: tap a SoundFont to set it as the default or long-press it to rename it or delete it.")
+                        Text("5. Optional: long-press a custom instrument to edit it and pick a non-default SoundFont.")
+                    }
+                }
+                .navigationTitle("Help")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") {
+                            isShowingHelpSheet = false
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
         .fileExporter(
             isPresented: $isShowingExporter,
@@ -350,8 +447,11 @@ struct ContentView: View {
     }
 
     private func startExport() {
+        let soundFontStore = SoundFontStore.shared
         let backup = MusicAppBackup(
             instruments: customInstruments,
+            soundFonts: soundFontStore.soundFonts,
+            soundFontAssets: soundFontStore.backupAssets(),
             melodies: loadCustomMelodies(),
             tallyPieces: pieces.map { piece in
                 PianoPieceBackup(
@@ -425,10 +525,19 @@ struct ContentView: View {
     }
 
     private func applyBackup(_ backup: MusicAppBackup, mode: ImportMode) {
+        applySoundFonts(definitions: backup.soundFonts, assets: backup.soundFontAssets, mode: mode)
         applyCustomInstruments(backup.instruments, mode: mode)
         applyCustomMelodies(backup.melodies, mode: mode)
         applyTallyPieces(backup.tallyPieces, mode: mode)
         applySettings(backup.settings, mode: mode)
+    }
+
+    private func applySoundFonts(definitions: [SoundFontDefinition], assets: [SoundFontAssetArchive], mode: ImportMode) {
+        SoundFontStore.shared.applyBackup(
+            definitions: definitions,
+            assets: assets,
+            replaceExisting: mode == .replace
+        )
     }
 
     private func applyCustomInstruments(_ imported: [CustomInstrumentDefinition], mode: ImportMode) {

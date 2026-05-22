@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		44213D0C2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = 44213D0B2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 */; };
+		3F0812106EEE4970A912C49F /* SoundFontManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86A2D7D2DB742D797D1E27D /* SoundFontManagementView.swift */; };
 		44290C362FA2D9B10099EC3D /* TallyMethodView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44290C352FA2D9B10099EC3D /* TallyMethodView.swift */; };
 		44290C382FA2D9F90099EC3D /* PianoPiece.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44290C372FA2D9F90099EC3D /* PianoPiece.swift */; };
 		44290C3A2FA2DB280099EC3D /* TallyMethodEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44290C392FA2DB280099EC3D /* TallyMethodEntry.swift */; };
@@ -26,10 +26,10 @@
 		44E8B51A2AF1270200830851 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E8B5192AF1270200830851 /* ContentView.swift */; };
 		44E8B51C2AF1270400830851 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44E8B51B2AF1270400830851 /* Assets.xcassets */; };
 		44E8B51F2AF1270400830851 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 44E8B51E2AF1270400830851 /* Preview Assets.xcassets */; };
+		D20833616426489CAAD30034 /* SoundFontStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5234439D533A4785AD44676A /* SoundFontStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		44213D0B2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Motif ES6 Concert Piano.sf2"; sourceTree = "<group>"; };
 		44290C352FA2D9B10099EC3D /* TallyMethodView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TallyMethodView.swift; sourceTree = "<group>"; };
 		44290C372FA2D9F90099EC3D /* PianoPiece.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PianoPiece.swift; sourceTree = "<group>"; };
 		44290C392FA2DB280099EC3D /* TallyMethodEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TallyMethodEntry.swift; sourceTree = "<group>"; };
@@ -49,6 +49,8 @@
 		44E8B5192AF1270200830851 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		44E8B51B2AF1270400830851 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		44E8B51E2AF1270400830851 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		5234439D533A4785AD44676A /* SoundFontStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFontStore.swift; sourceTree = "<group>"; };
+		D86A2D7D2DB742D797D1E27D /* SoundFontManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFontManagementView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +87,8 @@
 				44E8B5192AF1270200830851 /* ContentView.swift */,
 				44B0F88A2FB0730800D03182 /* MelodyEntryView.swift */,
 				44B0F8882FB055C900D03182 /* AddInstrumentSheet.swift */,
+				5234439D533A4785AD44676A /* SoundFontStore.swift */,
+				D86A2D7D2DB742D797D1E27D /* SoundFontManagementView.swift */,
 				44290C352FA2D9B10099EC3D /* TallyMethodView.swift */,
 				44290C3B2FA2E8EF0099EC3D /* PianoPieceView.swift */,
 				44290C372FA2D9F90099EC3D /* PianoPiece.swift */,
@@ -99,7 +103,6 @@
 				44A99F082B49BC7900E876F8 /* DiatonicChordView.swift */,
 				44E8B51B2AF1270400830851 /* Assets.xcassets */,
 				44E8B51D2AF1270400830851 /* Preview Content */,
-				44213D0B2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 */,
 			);
 			path = "Music App";
 			sourceTree = "<group>";
@@ -175,7 +178,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				44E8B51F2AF1270400830851 /* Preview Assets.xcassets in Resources */,
-				44213D0C2EF6B247002AE3FA /* Motif ES6 Concert Piano.sf2 in Resources */,
 				44E8B51C2AF1270400830851 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -203,6 +205,8 @@
 				44B0F88B2FB0730800D03182 /* MelodyEntryView.swift in Sources */,
 				44C1A85C2F09A9E70051CC03 /* MelodyView.swift in Sources */,
 				446B60242E5718EF0080B9D8 /* IndividualIntervalView.swift in Sources */,
+				D20833616426489CAAD30034 /* SoundFontStore.swift in Sources */,
+				3F0812106EEE4970A912C49F /* SoundFontManagementView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

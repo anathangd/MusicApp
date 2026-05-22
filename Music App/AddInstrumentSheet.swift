@@ -9,9 +9,11 @@ import SwiftUI
 
 struct AddInstrumentSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var soundFontStore = SoundFontStore.shared
     @State private var instrumentName = ""
     @State private var lowestNote = 57
     @State private var highestNote = 77
+    @State private var selectedSoundFontID: UUID?
     let initialInstrument: CustomInstrumentDefinition?
     let sheetTitle: String
     let saveButtonTitle: String
@@ -31,6 +33,7 @@ struct AddInstrumentSheet: View {
         _instrumentName = State(initialValue: initialInstrument?.name ?? "")
         _lowestNote = State(initialValue: initialInstrument?.lowestNote ?? 57)
         _highestNote = State(initialValue: initialInstrument?.highestNote ?? 77)
+        _selectedSoundFontID = State(initialValue: initialInstrument?.soundFontID)
     }
 
     private var canSave: Bool {
@@ -42,6 +45,18 @@ struct AddInstrumentSheet: View {
             Form {
                 Section("Instrument") {
                     TextField("Name", text: $instrumentName)
+                }
+
+                if !soundFontStore.soundFonts.isEmpty {
+                    Section("SoundFont") {
+                        Picker("SoundFont", selection: $selectedSoundFontID) {
+                            Text("Default").tag(Optional<UUID>(nil))
+                            ForEach(soundFontStore.soundFonts) { sf in
+                                Text(sf.displayName).tag(Optional(sf.id))
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
                 }
 
                 Section("Range (MIDI)") {
@@ -81,7 +96,8 @@ struct AddInstrumentSheet: View {
                                 id: initialInstrument?.id ?? UUID(),
                                 name: instrumentName.trimmingCharacters(in: .whitespacesAndNewlines),
                                 lowestNote: lowestNote,
-                                highestNote: highestNote
+                                highestNote: highestNote,
+                                soundFontID: selectedSoundFontID
                             )
                         )
                         dismiss()

@@ -37,9 +37,8 @@ final class PianoSequencePlayer {
             print("AVAudioEngine failed to start: \(error)")
         }
 
-        // Try to load ANY .sf2 SoundFont bundled with the app.
-        // Put your Korg .sf2 into the app target (Target Membership checked).
-        if let sf2URL = Bundle.main.urls(forResourcesWithExtension: "sf2", subdirectory: nil)?.first {
+        // Load the default SoundFont: prefer user-imported default, fall back to bundle.
+        if let sf2URL = SoundFontStore.shared.defaultSoundFontURL {
             do {
                 try sampler.loadSoundBankInstrument(
                     at: sf2URL,
@@ -47,17 +46,31 @@ final class PianoSequencePlayer {
                     bankMSB: UInt8(kAUSampler_DefaultMelodicBankMSB),
                     bankLSB: 0
                 )
-                // print("Loaded SoundFont: \(sf2URL.lastPathComponent)")
             } catch {
                 print("Failed to load SoundFont: \(error)")
             }
         } else {
-            print("No .sf2 found in app bundle. Add the SoundFont to the target.")
+            print("No .sf2 found. Add a SoundFont to the app or import one.")
         }
 
         isSetup = true
         // Prime sequencer
         _ = sequencer
+    }
+
+    /// Load (or swap) the SoundFont used by the sampler. Safe to call at any time after setup.
+    func loadSoundFont(url: URL) {
+        setupIfNeeded()
+        do {
+            try sampler.loadSoundBankInstrument(
+                at: url,
+                program: 0,
+                bankMSB: UInt8(kAUSampler_DefaultMelodicBankMSB),
+                bankLSB: 0
+            )
+        } catch {
+            print("Failed to load SoundFont \(url.lastPathComponent): \(error)")
+        }
     }
 
     func play(notes: [UInt8], tempoBPM: Double) {
